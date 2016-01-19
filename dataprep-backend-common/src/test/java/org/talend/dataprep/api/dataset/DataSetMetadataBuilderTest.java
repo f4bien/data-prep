@@ -15,6 +15,8 @@ package org.talend.dataprep.api.dataset;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.talend.dataprep.api.dataset.ColumnMetadata.Builder.column;
 
 import org.junit.Test;
@@ -179,4 +181,6 @@ public class DataSetMetadataBuilderTest {
                 .schemaParserResult(SchemaParserResult.Builder.parserResult().sheetName("sheetName").build()).build();
         assertEquals("sheetName", metadata.getSchemaParserResult().getSheetName());
     }
+
+
 }

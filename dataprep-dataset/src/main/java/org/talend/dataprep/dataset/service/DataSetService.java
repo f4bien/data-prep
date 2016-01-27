@@ -210,7 +210,7 @@ public class DataSetService {
                 if (dataSetMetadata != null) {
                     metadatas.add(dataSetMetadataRepository.get(folderEntry.getContentId()));
                 } else {
-                    folderRepository.removeFolderEntry(folderEntry.getPath(), //
+                    folderRepository.removeFolderEntry(folderEntry.getFolderId(), //
                             folderEntry.getContentId(), //
                             folderEntry.getContentType());
                 }

@@ -1,0 +1,49 @@
+<!--
+  ~ ============================================================================
+  ~
+  ~  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+  ~
+  ~  This source code is available under agreement available at
+  ~  https://github.com/Talend/data-prep/blob/master/LICENSE
+  ~
+  ~  You should have received a copy of the agreement
+  ~  along with this program; if not, write to Talend SA
+  ~  9 rue Pages 92150 Suresnes, France
+  ~
+  ~ ============================================================================
+  -->
+<div class="preparation" ng-click="$ctrl.onTileClick({preparation: $ctrl.preparation})">
+    <div class="information">
+        <div ng-if="$ctrl.editableTitle">
+            <talend-editable-text text="$ctrl.preparation.name"
+                                  text-class="title one-line"
+                                  on-text-click="$ctrl.onTitleClick({preparation: $ctrl.preparation})"
+                                  on-validate="$ctrl.onRename({preparation: $ctrl.preparation, text: text})"
+                                  text-title="{{$ctrl.preparation.name}}"
+                                  validate-only-on-change></talend-editable-text>
+        </div>
+
+        <div ng-if="!$ctrl.editableTitle">
+            <span class="title one-line" title="{{$ctrl.preparation.name}}">{{$ctrl.preparation.name}}</span>
+        </div>
+
+
+        <p class="description">
+            <span translate-once="OWNED_BY"></span> <span class="important" title="{{$ctrl.preparation.author}}" >{{$ctrl.preparation.author}}</span><br/>
+            <span translate-once="LAST_MODIFICATION"></span><span translate-once="COLON"></span>{{$ctrl.preparation.lastModificationDate | TDPMoment}}
+        </p>
+
+        <p class="details">
+            <span class="important name one-line" title="{{$ctrl.dataset.name}}">{{$ctrl.dataset.name}}</span>&nbsp;- {{ $ctrl.dataset.records}} <span translate-once="ROWS"></span>
+        </p>
+        <p class="details">
+            <span class="important">{{$ctrl.preparation.steps.length - 1}}</span> <span class="important" translate-once="STEPS"></span> <span translate-once="RECIPE"></span>
+        </p>
+    </div>
+
+    <div class="actions">
+        <a ng-if="$ctrl.onFavortite" class="favorite" data-icon="f" ng-class="{selected: $ctrl.preparation.favorite}" ng-click="$ctrl.preparation.favorite = !$ctrl.preparation.favorite"></a>
+        <a ng-if="$ctrl.onClone" class="clone-btn" data-icon="B" ng-click="$ctrl.onClone({preparation: $ctrl.preparation})" id="clone_btn_{{$ctrl.preparation.id}}"></a>
+        <a ng-if="$ctrl.onRemove" class="trash" data-icon="e" ng-click="$ctrl.onRemove({preparation: $ctrl.preparation})"></a>
+    </div>
+</div>

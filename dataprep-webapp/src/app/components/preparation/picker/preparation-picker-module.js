@@ -20,15 +20,18 @@ import PreparationPicker from './preparation-picker-component';
      * @name data-prep.preparation-picker
      * @description This module contains the preparation picker form
      * @requires data-prep.services.dataset
+     * @requires data-prep.services.preparation
+     * @requires data-prep.services.recipe
+     * @requires data-prep.services.state
      */
 
-    angular.module('data-prep.preparation-picker', [
-        'data-prep.services.dataset',
-        'data-prep.services.state',
-        'ui.router',
-        'data-prep.services.preparation',
-        'data-prep.services.recipe'
-
-    ])
+    angular.module('data-prep.preparation-picker',
+        [
+            'ui.router',
+            'data-prep.services.dataset',
+            'data-prep.services.preparation',
+            'data-prep.services.recipe',
+            'data-prep.services.state'
+        ])
         .component('preparationPicker', PreparationPicker);
 })();

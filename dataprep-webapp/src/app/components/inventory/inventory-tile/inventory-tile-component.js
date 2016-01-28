@@ -11,15 +11,19 @@
 
  ============================================================================*/
 
-import PreparationPickerCtrl from './preparation-picker-controller';
 
-const PreparationPicker = {
+const inventoryTile = {
     bindings: {
-        datasetName: '@',
-        datasetId: '@'
+        dataset: '<',
+        editableTitle: '<',
+        onClone: '&',
+        onFavortite: '&',
+        onRemove: '&',
+        onRename: '&',
+        onTileClick: '&',
+        onTitleClick: '&',
+        preparation: '<'
     },
-    controller: PreparationPickerCtrl,
-    templateUrl: 'app/components/playground/preparation-picker/preparation-picker.html'
+    templateUrl: 'app/components/inventory/inventory-tile/inventory-tile.html'
 };
-
-export default PreparationPicker
+export default inventoryTile

@@ -20,11 +20,19 @@ class PreparationPickerCtrl {
         this.$state = $state;
         this.datasetService = DatasetService;
         this.stateService = StateService;
+
         this.state = state;
+        this.datasetName = this.state.playground.preparation ?
+            this.state.playground.preparation.name :
+            this.state.playground.dataset.name;
+        this.datasetId = this.state.playground.dataset.id;
+
         this.preparationService = PreparationService;
         this.preparationListService = PreparationListService;
         this.isFetchingPreparations = true;
         this.recipeService = RecipeService;
+
+        this.candidatePreparations = [];
     }
 
     /**
@@ -41,14 +49,13 @@ class PreparationPickerCtrl {
                         compatiblePreparations = _.reject(compatiblePreparations, {id: this.state.playground.preparation.id});
                     }
 
-                    const candidatePreparations = _.map(compatiblePreparations, (candidatePrepa) => {
+                    const wrappedCandidatePreparations = _.map(compatiblePreparations, (candidatePrepa) => {
                         return {
                             preparation: candidatePrepa,
                             dataset: _.find(this.state.inventory.datasets, {id: candidatePrepa.dataSetId})
                         };
                     });
-
-                    this.stateService.setCandidatePreparations(candidatePreparations);
+                    this.candidatePreparations = wrappedCandidatePreparations;
                 }
             })
             .finally(() => {
@@ -81,18 +88,19 @@ class PreparationPickerCtrl {
      * @description applies the selected preparation to the dataset
      **/
     _applyPreparation() {
-        this.preparationService.clone(this.selectedPreparation.preparation.id)
+        this.preparationService.clone(this.selectedPreparation.id)
             .then((preparationCloneId) => this.preparationService.update(preparationCloneId, {
                 dataSetId: this.datasetId,
-                name: this.state.playground.preparation ? this.state.playground.preparation.name : this.datasetName
+                name: this.datasetName
             }))
-            .then((updatedPreparationId) => {//TODO backend should not return a new preparation Id after an update
+            .then((updatedPreparationId) => {
                 return this.preparationListService.refreshPreparations()
                     .then(() => updatedPreparationId);
             })
             .then((updatedPreparationId) => {
-                this.stateService.updatePreparationPickerDisplay(false);
-                this.stateService.resetPlayground();//in order to remove the chart container ng-if="...vertical"
+                this.closePicker();
+                //this.stateService.updatePreparationPickerDisplay(false);
+                //this.stateService.resetPlayground();//in order to remove the chart container ng-if="...vertical"
                 this.$state.go('playground.preparation', {prepid: updatedPreparationId}, {reload: true});
             })
             .finally(() => {

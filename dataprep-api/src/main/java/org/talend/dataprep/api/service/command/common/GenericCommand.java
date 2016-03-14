@@ -13,6 +13,7 @@
 
 package org.talend.dataprep.api.service.command.common;
 
+import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.talend.dataprep.api.service.command.common.Defaults.passthrough;
 
 import java.io.IOException;
@@ -22,6 +23,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -37,6 +39,7 @@ import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.json.JsonErrorCode;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.security.Security;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -56,6 +59,18 @@ public class GenericCommand<T> extends HystrixCommand<T> {
 
     /** Behaviours map.  */
     private final Map<HttpStatus, BiFunction<HttpRequestBase, HttpResponse, T>> behavior = new EnumMap<>(HttpStatus.class);
+
+    private Supplier<HttpRequestBase> httpCall;
+
+    /** Headers of the response received by the command. Set in the run command. */
+    private Header[] commandResponseHeaders = new Header[0];
+
+    /** Default onError behaviour. */
+    private Function<Exception, RuntimeException> onError = passthrough();
+
+    /** DataPrep security holder. */
+    @Autowired
+    private Security security;
 
     /** The http client. */
     @Autowired
@@ -81,14 +96,6 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     @Value("${preparation.service.url}")
     protected String preparationServiceUrl;
 
-    private Supplier<HttpRequestBase> httpCall;
-
-    /** Headers of the response received by the command. Set in the run command. */
-    private Header[] commandResponseHeaders = new Header[0];
-
-    /** Default onError behaviour. */
-    private Function<Exception, RuntimeException> onError = passthrough();
-
     /**
      * Protected constructor.
      *
@@ -113,6 +120,13 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     @Override
     protected T run() throws Exception {
         final HttpRequestBase request = httpCall.get();
+
+        // update request header with security token
+        String authenticationToken o= security.getAuthenticationToken();
+        if (StringUtils.isNotBlank(authenticationToken)) {
+            request.addHeader(AUTHORIZATION, authenticationToken);
+        }
+
         final HttpResponse response = client.execute(request);
         commandResponseHeaders = response.getAllHeaders();
 

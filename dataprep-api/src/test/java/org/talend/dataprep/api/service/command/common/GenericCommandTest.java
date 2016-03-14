@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -40,6 +41,7 @@ import org.talend.dataprep.api.service.APIService;
 import org.talend.dataprep.dataset.Application;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.security.Security;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -57,6 +59,9 @@ public class GenericCommandTest {
 
     @Autowired
     private HttpClient httpClient;
+
+    @Autowired
+    private Security security;
 
     private static RuntimeException error(Exception e) {
         lastException = (TDPException) e;
@@ -81,6 +86,18 @@ public class GenericCommandTest {
         final String result = command.run();
         // Then
         assertThat(result, is("success"));
+        assertThat(lastException, nullValue());
+    }
+
+    @Test
+    public void testAuthenticationToken() throws Exception {
+        // Given
+        final GenericCommand<String> command = getCommand("http://localhost:" + port + "/command/test/authentication/token",
+                GenericCommandTest::error);
+        // When
+        final String result = command.run();
+        // Then
+        assertThat(result, is(security.getAuthenticationToken()));
         assertThat(lastException, nullValue());
     }
 
@@ -229,6 +246,21 @@ public class GenericCommandTest {
             execute(() -> new HttpGet(url));
             onError(errorHandling);
             on(HttpStatus.OK).then(asString());
+        }
+    }
+
+    @Component
+    @Primary // to override default NoOpSecurity
+    private static class TestSecurity implements Security {
+
+        @Override
+        public String getUserId() {
+            return "anonymous";
+        }
+
+        @Override
+        public String getAuthenticationToken() {
+            return "#1234";
         }
     }
 }

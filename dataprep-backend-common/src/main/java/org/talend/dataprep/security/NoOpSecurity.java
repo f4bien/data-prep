@@ -18,8 +18,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class NoOpSecurity implements Security {
 
+    /**
+     * @see Security#getUserId()
+     */
     @Override
     public String getUserId() {
         return System.getProperty("user.name");
+    }
+
+    /**
+     * @see Security#getAuthenticationToken()
+     */
+    @Override
+    public String getAuthenticationToken() {
+        // no token in the Free Desktop edition
+        return null;
     }
 }

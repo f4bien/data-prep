@@ -33,38 +33,51 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.json.JsonErrorCode;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 
+/**
+ * Base Hystrix command request for all DataPrep commands.
+ * @param <T> Command result type.
+ */
 @Component
 @Scope("request")
 public class GenericCommand<T> extends HystrixCommand<T> {
 
+    /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(GenericCommand.class);
 
-    protected final HttpClient client;
-
+    /** Behaviours map.  */
     private final Map<HttpStatus, BiFunction<HttpRequestBase, HttpResponse, T>> behavior = new EnumMap<>(HttpStatus.class);
 
+    /** The http client. */
     @Autowired
-    protected Jackson2ObjectMapperBuilder builder;
+    protected HttpClient client;
 
+    /** Jackson object mapper to handle json. */
+    @Autowired
+    protected ObjectMapper objectMapper;
+
+    /** Spring application context.*/
     @Autowired
     protected ApplicationContext context;
 
+    /** Transformation service URL. */
     @Value("${transformation.service.url}")
     protected String transformationServiceUrl;
 
+    /** Dataset service URL. */
     @Value("${dataset.service.url}")
     protected String datasetServiceUrl;
 
+    /** Preparation service URL. */
     @Value("${preparation.service.url}")
     protected String preparationServiceUrl;
 
@@ -73,11 +86,16 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     /** Headers of the response received by the command. Set in the run command. */
     private Header[] commandResponseHeaders = new Header[0];
 
+    /** Default onError behaviour. */
     private Function<Exception, RuntimeException> onError = passthrough();
 
-    protected GenericCommand(HystrixCommandGroupKey group, HttpClient client) {
+    /**
+     * Protected constructor.
+     *
+     * @param group the command group.
+     */
+    protected GenericCommand(HystrixCommandGroupKey group) {
         super(group);
-        this.client = client;
     }
 
     /**
@@ -145,7 +163,7 @@ public class GenericCommand<T> extends HystrixCommand<T> {
         return (req, res) -> {
             final int statusCode = res.getStatusLine().getStatusCode();
             try {
-                JsonErrorCode code = builder.build().readerFor(JsonErrorCode.class).readValue(res.getEntity().getContent());
+                JsonErrorCode code = objectMapper.readerFor(JsonErrorCode.class).readValue(res.getEntity().getContent());
                 code.setHttpStatus(statusCode);
                 final TDPException cause = new TDPException(code);
                 throw onError.apply(cause);

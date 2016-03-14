@@ -19,7 +19,6 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
@@ -35,14 +34,14 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 @Scope("prototype")
 public class FoldersList extends GenericCommand<InputStream> {
 
-    public FoldersList(HttpClient client, String path) {
-        super(APIService.DATASET_GROUP, client);
+    public FoldersList(String path) {
+        super(APIService.DATASET_GROUP);
         execute(() -> onExecute(path));
         on(HttpStatus.OK).then(pipeStream());
     }
 
-    public FoldersList(HttpClient client) {
-        super(APIService.DATASET_GROUP, client);
+    public FoldersList() {
+        super(APIService.DATASET_GROUP);
         execute(() -> onExecute(null));
         on(HttpStatus.OK).then(pipeStream());
     }

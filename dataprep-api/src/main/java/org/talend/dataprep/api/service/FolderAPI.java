@@ -67,7 +67,7 @@ public class FolderAPI extends APIService {
     @ApiOperation(value = "List children folders of the parameter if null list root children.", produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public void children(@RequestParam(required = false) String path, final OutputStream output) {
-        final HystrixCommand<InputStream> foldersList = getCommand(FoldersList.class, getClient(), path);
+        final HystrixCommand<InputStream> foldersList = getCommand(FoldersList.class, path);
         try (InputStream commandResult = foldersList.execute()){
             HttpResponseContext.header("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
             IOUtils.copyLarge(commandResult, output);
@@ -87,7 +87,7 @@ public class FolderAPI extends APIService {
     @ApiOperation(value = "Search Folders with parameter as part of the name", produces = MediaType.APPLICATION_JSON_VALUE, notes = "")
     @Timed
     public void search(@RequestParam(required = false) String pathName, final OutputStream output) {
-        final HystrixCommand<InputStream> searchFolders = getCommand(SearchFolders.class, getClient(), pathName);
+        final HystrixCommand<InputStream> searchFolders = getCommand(SearchFolders.class, pathName);
         try (InputStream commandResult = searchFolders.execute()){
             HttpResponseContext.header("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
             IOUtils.copyLarge(commandResult, output);
@@ -101,7 +101,7 @@ public class FolderAPI extends APIService {
     @ApiOperation(value = "List all folders.", produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public void allFolder(final OutputStream output) {
-        final HystrixCommand<InputStream> foldersList = getCommand(AllFoldersList.class, getClient());
+        final HystrixCommand<InputStream> foldersList = getCommand(AllFoldersList.class);
         try (InputStream commandResult = foldersList.execute()){
             HttpResponseContext.header("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
             IOUtils.copyLarge(commandResult, output);
@@ -116,7 +116,7 @@ public class FolderAPI extends APIService {
     @Timed
     public void addFolder(@RequestParam(required = true) String path, //
             final OutputStream output) {
-        final HystrixCommand<InputStream> createChildFolder = getCommand(CreateChildFolder.class, getClient(), path);
+        final HystrixCommand<InputStream> createChildFolder = getCommand(CreateChildFolder.class, path);
         try (InputStream commandResult = createChildFolder.execute()){
             HttpResponseContext.header("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
             IOUtils.copyLarge(commandResult, output);
@@ -137,7 +137,7 @@ public class FolderAPI extends APIService {
     @Timed
     public void removeFolder(@RequestParam(required = true) String path, final OutputStream output) {
         try {
-            final HystrixCommand<HttpResponse> removeFolder = getCommand(RemoveFolder.class, getClient(), path);
+            final HystrixCommand<HttpResponse> removeFolder = getCommand(RemoveFolder.class, path);
             HttpResponse result = removeFolder.execute();
             try {
                 HttpResponseContext.status(HttpStatus.valueOf(result.getStatusCode()));
@@ -171,7 +171,7 @@ public class FolderAPI extends APIService {
             throw new TDPException(APIErrorCodes.UNABLE_TO_RENAME_FOLDER);
         }
         try {
-            final HystrixCommand<Void> renameFolder = getCommand(RenameFolder.class, getClient(), path, newPath);
+            final HystrixCommand<Void> renameFolder = getCommand(RenameFolder.class, path, newPath);
             renameFolder.execute();
         } catch (Exception e) {
             throw new TDPException(APIErrorCodes.UNABLE_TO_RENAME_FOLDER, e);
@@ -192,7 +192,7 @@ public class FolderAPI extends APIService {
             @PathVariable(value = "contentType") String contentType, //
             @RequestParam String path) {
         try {
-            final HystrixCommand<Void> removeFolderEntry = getCommand(RemoveFolderEntry.class, getClient(), path, contentType,
+            final HystrixCommand<Void> removeFolderEntry = getCommand(RemoveFolderEntry.class, path, contentType,
                     contentId);
             removeFolderEntry.execute();
         } catch (Exception e) {
@@ -212,7 +212,7 @@ public class FolderAPI extends APIService {
     @Timed
     @VolumeMetered
     public void entries(@RequestParam String path, @RequestParam String contentType, final OutputStream output) {
-        final HystrixCommand<InputStream> listFolderEntries = getCommand(FolderEntriesList.class, getClient(), path,
+        final HystrixCommand<InputStream> listFolderEntries = getCommand(FolderEntriesList.class, path,
                 contentType);
         try (InputStream commandResult = listFolderEntries.execute()) {
             HttpResponseContext.header("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$

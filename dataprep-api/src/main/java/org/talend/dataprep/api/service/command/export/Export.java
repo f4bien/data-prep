@@ -23,7 +23,6 @@ import java.net.URISyntaxException;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
@@ -41,8 +40,8 @@ import org.talend.dataprep.exception.error.APIErrorCodes;
 @Scope("request")
 public class Export extends PreparationCommand<InputStream> {
 
-    private Export(final HttpClient client, final ExportParameters input) {
-        super(APIService.TRANSFORM_GROUP, client);
+    private Export(final ExportParameters input) {
+        super(APIService.TRANSFORM_GROUP);
         execute(() -> onExecute(input));
         on(HttpStatus.OK).then(pipeStream());
     }

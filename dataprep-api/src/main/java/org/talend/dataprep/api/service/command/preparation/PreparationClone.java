@@ -17,7 +17,6 @@ import static org.talend.dataprep.api.service.command.common.Defaults.asString;
 
 import java.net.URISyntaxException;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
@@ -33,8 +32,8 @@ import org.talend.dataprep.exception.error.APIErrorCodes;
 @Scope("request")
 public class PreparationClone extends GenericCommand<String> {
 
-    private PreparationClone(HttpClient client, String id) {
-        super(APIService.PREPARATION_GROUP, client);
+    private PreparationClone(String id) {
+        super(APIService.PREPARATION_GROUP);
         execute(() -> onExecute(id)); // $NON-NLS-1$
         onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_CREATE_PREPARATION, e));
         on(HttpStatus.OK).then(asString());

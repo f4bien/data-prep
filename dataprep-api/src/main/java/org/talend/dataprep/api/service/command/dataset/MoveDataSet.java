@@ -21,7 +21,6 @@ import java.net.URISyntaxException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.context.annotation.Scope;
@@ -45,14 +44,13 @@ public class MoveDataSet extends GenericCommand<HttpResponse> {
     /**
      * Constructor.
      *
-     * @param client the http client to use.
      * @param dataSetId the requested dataset id.
      * @param folderPath the origin folder othe the dataset
      * @param newFolderPath the new folder path
      * @param newName the new name (optional) 
      */
-    public MoveDataSet( HttpClient client, String dataSetId, String folderPath, String newFolderPath, String newName) {
-        super(PreparationAPI.DATASET_GROUP, client);
+    public MoveDataSet(String dataSetId, String folderPath, String newFolderPath, String newName) {
+        super(PreparationAPI.DATASET_GROUP);
         execute(() -> {
             try {
                 URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/datasets/move/" + dataSetId);

@@ -18,7 +18,6 @@ import static org.talend.dataprep.api.service.command.common.Defaults.pipeStream
 
 import java.io.InputStream;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -39,13 +38,12 @@ public class DataSetGet extends GenericCommand<InputStream> {
     /**
      * Constructor.
      *
-     * @param client the http client to use.
      * @param dataSetId the requested dataset id.
      * @param metadata true if the metadata is requested.
      * @param sample optional sample size (if null or <=0, the full dataset is returned).
      */
-    public DataSetGet(HttpClient client, String dataSetId, boolean metadata, Long sample) {
-        super(PreparationAPI.DATASET_GROUP, client);
+    public DataSetGet(String dataSetId, boolean metadata, Long sample) {
+        super(PreparationAPI.DATASET_GROUP);
         execute(() -> {
             String url = datasetServiceUrl + "/datasets/" + dataSetId + "/content?metadata=" + metadata;
             if (sample != null) {

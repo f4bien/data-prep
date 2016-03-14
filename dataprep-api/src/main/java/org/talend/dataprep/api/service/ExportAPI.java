@@ -64,7 +64,7 @@ public class ExportAPI extends APIService {
                 }
             }
             input.setArguments(arguments);
-            final GenericCommand<InputStream> command = getCommand(Export.class, getClient(), input);
+            final GenericCommand<InputStream> command = getCommand(Export.class, input);
 
             // copy all headers from the command response so that the mime-type is correctly forwarded for instance
             try (InputStream commandInputStream = command.execute()) {
@@ -89,7 +89,7 @@ public class ExportAPI extends APIService {
     @ApiOperation(value = "Get the available format types")
     @Timed
     public void exportTypes(final OutputStream output) {
-        final HystrixCommand<InputStream> command = getCommand(ExportTypes.class, getClient());
+        final HystrixCommand<InputStream> command = getCommand(ExportTypes.class);
         try (InputStream commandResult = command.execute()) {
             IOUtils.copyLarge(commandResult, output);
             output.flush();

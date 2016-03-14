@@ -18,7 +18,6 @@ import static org.talend.dataprep.api.service.command.common.Defaults.*;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
@@ -44,13 +43,12 @@ public class CreateDataSet extends GenericCommand<String> {
     /**
      * Default constructor.
      *
-     * @param client http client.
      * @param name name of the dataset.
      * @param contentType content-type of the dataset.
      * @param dataSetContent Dataset content or import parameters in json for remote datasets.
      */
-    private CreateDataSet(HttpClient client, String name, String contentType, InputStream dataSetContent, String folderPath) {
-        super(PreparationAPI.DATASET_GROUP, client);
+    private CreateDataSet(String name, String contentType, InputStream dataSetContent, String folderPath) {
+        super(PreparationAPI.DATASET_GROUP);
         execute(() -> onExecute(name, contentType, dataSetContent, folderPath));
         onError(e -> {
             if (e instanceof TDPException) {

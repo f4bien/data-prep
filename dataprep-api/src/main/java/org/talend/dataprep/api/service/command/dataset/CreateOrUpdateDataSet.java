@@ -19,7 +19,6 @@ import static org.talend.dataprep.api.service.command.common.Defaults.emptyStrin
 import java.io.InputStream;
 import java.net.URISyntaxException;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.InputStreamEntity;
@@ -42,13 +41,12 @@ public class CreateOrUpdateDataSet extends GenericCommand<String> {
     /**
      * Private constructor.
      *
-     * @param client the http client.
      * @param id the dataset id.
      * @param name the dataset name.
      * @param dataSetContent the new dataset content.
      */
-    private CreateOrUpdateDataSet(HttpClient client, String id, String name, InputStream dataSetContent) {
-        super(PreparationAPI.DATASET_GROUP, client);
+    private CreateOrUpdateDataSet(String id, String name, InputStream dataSetContent) {
+        super(PreparationAPI.DATASET_GROUP);
         execute(() -> {
             try {
                 URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/datasets/" + id + "/raw/") //

@@ -30,13 +30,17 @@ import org.talend.dataprep.api.service.PreparationAPI;
 import org.talend.dataprep.api.service.command.common.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.exception.error.DataSetErrorCodes;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.netflix.hystrix.HystrixCommand;
 
 @Component
 @Scope("request")
 public class FolderDataSetList extends GenericCommand<InputStream> {
 
-    public FolderDataSetList(HttpClient client, String sort, String order, String folder) {
-        super(PreparationAPI.TRANSFORM_GROUP, client);
+    public FolderDataSetList(String sort, String order, String folder) {
+        super(PreparationAPI.TRANSFORM_GROUP);
         execute(() -> onExecute(sort, order, folder));
         on(HttpStatus.OK).then(pipeStream());
     }

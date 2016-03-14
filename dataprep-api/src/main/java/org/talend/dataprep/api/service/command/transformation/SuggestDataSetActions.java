@@ -20,7 +20,6 @@ import java.util.function.BiFunction;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ByteArrayEntity;
@@ -38,7 +37,6 @@ import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * <p>
@@ -60,11 +58,10 @@ public class SuggestDataSetActions extends ChainedCommand<String, DataSetMetadat
     /**
      * Constructor.
      *
-     * @param client the http client to use.
      * @param retrieveMetadata the previous command to execute.
      */
-    private SuggestDataSetActions(HttpClient client, DataSetGetMetadata retrieveMetadata) {
-        super(PreparationAPI.TRANSFORM_GROUP, client, retrieveMetadata);
+    private SuggestDataSetActions(DataSetGetMetadata retrieveMetadata) {
+        super(PreparationAPI.TRANSFORM_GROUP, retrieveMetadata);
         execute(this::onExecute);
         onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_SUGGESTED_ACTIONS, e));
         on(HttpStatus.OK).then(onOk());
@@ -98,7 +95,6 @@ public class SuggestDataSetActions extends ChainedCommand<String, DataSetMetadat
             // queries its possible actions
             final HttpPost post = new HttpPost(transformationServiceUrl + "/suggest/dataset");
             post.setHeader(new BasicHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE));
-            ObjectMapper objectMapper = builder.build();
             byte[] dataSetMetadataJSON = objectMapper.writer().writeValueAsBytes(metadata);
             post.setEntity(new ByteArrayEntity(dataSetMetadataJSON));
             return post;

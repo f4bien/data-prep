@@ -19,7 +19,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.client.HttpClient;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Action;
@@ -32,8 +31,8 @@ public class PreviewDiff extends PreviewAbstract {
 
     private final PreviewDiffInput input;
 
-    public PreviewDiff(final HttpClient client, final PreviewDiffInput input) {
-        super(client);
+    public PreviewDiff(final PreviewDiffInput input) {
+        super();
         this.input = input;
     }
 

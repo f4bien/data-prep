@@ -19,7 +19,6 @@ import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_LIST_F
 import java.io.InputStream;
 import java.net.URISyntaxException;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
@@ -37,8 +36,8 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 public class AllFoldersList
     extends GenericCommand<InputStream> {
 
-    public AllFoldersList(HttpClient client) {
-        super(APIService.DATASET_GROUP, client);
+    public AllFoldersList() {
+        super(APIService.DATASET_GROUP);
         execute(() -> onExecute());
         onError(e -> new TDPException(UNABLE_TO_LIST_FOLDERS, e, ExceptionContext.build()));
         on(HttpStatus.OK).then(pipeStream());

@@ -69,7 +69,7 @@ public class GenericCommandTest {
     }
 
     private TestCommand getCommand(String url, Function<Exception, RuntimeException> errorHandling) {
-        return context.getBean(TestCommand.class, httpClient, url, errorHandling);
+        return context.getBean(TestCommand.class, url, errorHandling);
     }
 
     @Test
@@ -224,8 +224,8 @@ public class GenericCommandTest {
     @Scope("prototype")
     private static class TestCommand extends GenericCommand<String> {
 
-        protected TestCommand(HttpClient client, String url, Function<Exception, RuntimeException> errorHandling) {
-            super(APIService.DATASET_GROUP, client);
+        protected TestCommand(String url, Function<Exception, RuntimeException> errorHandling) {
+            super(APIService.DATASET_GROUP);
             execute(() -> new HttpGet(url));
             onError(errorHandling);
             on(HttpStatus.OK).then(asString());

@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
@@ -37,8 +36,8 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 @Scope("request")
 public class FolderEntriesList extends GenericCommand<InputStream> {
 
-    public FolderEntriesList(HttpClient client, String path, String contentType) {
-        super(APIService.DATASET_GROUP, client);
+    public FolderEntriesList(String path, String contentType) {
+        super(APIService.DATASET_GROUP);
         execute(() -> onExecute(path, contentType));
         onError(e -> new TDPException(UNABLE_TO_LIST_FOLDER_ENTRIES, e, ExceptionContext.build()));
         on(HttpStatus.OK).then(pipeStream());

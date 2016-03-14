@@ -20,14 +20,12 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.service.DataSetAPI;
 import org.talend.dataprep.api.service.PreparationAPI;
 import org.talend.dataprep.api.service.command.common.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
@@ -38,12 +36,12 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 @Scope("request")
 public class DataSetList extends GenericCommand<InputStream> {
 
-    private DataSetList(HttpClient client, String sort, String order) {
-        this(client, sort, order, null);
+    private DataSetList(String sort, String order) {
+        this(sort, order, null);
     }
 
-    private DataSetList(HttpClient client, String sort, String order, String folder) {
-        super(DataSetAPI.DATASET_GROUP, client);
+    private DataSetList(String sort, String order, String folder) {
+        super(PreparationAPI.DATASET_GROUP);
 
         try {
             execute(() -> onExecute( sort, order, folder));

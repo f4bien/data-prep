@@ -19,7 +19,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.client.HttpClient;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Action;
@@ -33,8 +32,8 @@ public class PreviewUpdate extends PreviewAbstract {
     /** The all the preview parameters. */
     private final PreviewUpdateInput input;
 
-    public PreviewUpdate(final HttpClient client, final PreviewUpdateInput input) {
-        super(client);
+    public PreviewUpdate(final PreviewUpdateInput input) {
+        super();
         this.input = input;
     }
 

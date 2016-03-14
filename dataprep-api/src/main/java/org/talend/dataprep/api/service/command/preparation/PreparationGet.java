@@ -18,7 +18,6 @@ import static org.talend.dataprep.api.service.command.common.Defaults.pipeStream
 
 import java.io.InputStream;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -32,8 +31,8 @@ import org.talend.dataprep.exception.error.APIErrorCodes;
 @Scope("request")
 public class PreparationGet extends GenericCommand<InputStream> {
 
-    private PreparationGet(HttpClient client, String id) {
-        super(APIService.PREPARATION_GROUP, client);
+    private PreparationGet(String id) {
+        super(APIService.PREPARATION_GROUP);
         execute(() -> new HttpGet(preparationServiceUrl + "/preparations/" + id));
         onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_PREPARATION_CONTENT, e));
         on(HttpStatus.NO_CONTENT, HttpStatus.ACCEPTED).then(emptyStream());

@@ -19,7 +19,6 @@ import static org.talend.dataprep.api.service.command.common.Defaults.pipeStream
 import java.io.InputStream;
 
 import org.apache.http.HttpHeaders;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
 import org.springframework.context.annotation.Scope;
@@ -41,11 +40,10 @@ public class SuggestColumnActions extends GenericCommand<InputStream> {
     /**
      * Constructor.
      *
-     * @param client the http client.
      * @param input the column metadata to get the actions for (in json).
      */
-    private SuggestColumnActions(HttpClient client, InputStream input) {
-        super(PreparationAPI.TRANSFORM_GROUP, client);
+    private SuggestColumnActions(InputStream input) {
+        super(PreparationAPI.TRANSFORM_GROUP);
         execute(() -> {
             HttpPost post = new HttpPost(transformationServiceUrl + "/suggest/column");
             post.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);

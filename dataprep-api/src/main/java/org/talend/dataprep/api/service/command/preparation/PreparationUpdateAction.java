@@ -21,7 +21,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.InputStreamEntity;
@@ -47,8 +46,8 @@ public class PreparationUpdateAction extends PreparationCommand<Void> {
 
     private final String preparationId;
 
-    private PreparationUpdateAction(final HttpClient client, final String preparationId, final String stepId, final AppendStep updatedStep) {
-        super(APIService.PREPARATION_GROUP, client);
+    private PreparationUpdateAction(final String preparationId, final String stepId, final AppendStep updatedStep) {
+        super(APIService.PREPARATION_GROUP);
         this.stepId = stepId;
         this.updatedStep = updatedStep;
         this.preparationId = preparationId;
@@ -62,7 +61,7 @@ public class PreparationUpdateAction extends PreparationCommand<Void> {
             updatedStep.setDiff(diff);
             final HttpPut actionAppend = new HttpPut(
                     preparationServiceUrl + "/preparations/" + preparationId + "/actions/" + stepId); //$NON-NLS-1$ //$NON-NLS-2$
-            final String stepAsString = builder.build().writeValueAsString(updatedStep);
+            final String stepAsString = objectMapper.writeValueAsString(updatedStep);
             final InputStream stepInputStream = new ByteArrayInputStream(stepAsString.getBytes());
 
             actionAppend.setHeader(new BasicHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE));

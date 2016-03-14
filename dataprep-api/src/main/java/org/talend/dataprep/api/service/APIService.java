@@ -13,9 +13,6 @@
 
 package org.talend.dataprep.api.service;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.pool.PoolStats;
 import org.slf4j.Logger;
@@ -41,15 +38,10 @@ public class APIService {
 
     public static final HystrixCommandGroupKey DATASET_GROUP = HystrixCommandGroupKey.Factory.asKey("dataset"); //$NON-NLS-1$
 
-    private final RequestConfig requestConfig = RequestConfig.custom().setRedirectsEnabled(false).build();
-
     protected static final Logger LOG = LoggerFactory.getLogger(APIService.class);
 
     @Autowired
     private WebApplicationContext context;
-
-    @Autowired
-    private CloseableHttpClient httpClient;
 
     @Autowired
     private PoolingHttpClientConnectionManager connectionManager;
@@ -66,9 +58,6 @@ public class APIService {
         }
     }
 
-    protected HttpClient getClient() {
-        return httpClient;
-    }
 
     /**
      * @return the connection pool stats.

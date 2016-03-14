@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
@@ -40,8 +39,8 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 @Scope("request")
 public class RemoveFolder extends GenericCommand<HttpResponse> {
 
-    public RemoveFolder(HttpClient client, String path) {
-        super(APIService.DATASET_GROUP, client);
+    public RemoveFolder(String path) {
+        super(APIService.DATASET_GROUP);
         execute(() -> onExecute(path));
         onError(e -> new TDPException(UNABLE_TO_DELETE_FOLDER, e, ExceptionContext.build()));
         on(OK, CONFLICT).then((httpRequestBase, httpResponse) -> {

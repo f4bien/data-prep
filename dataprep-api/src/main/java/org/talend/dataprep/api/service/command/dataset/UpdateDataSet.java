@@ -18,7 +18,6 @@ import static org.talend.dataprep.api.service.command.common.Defaults.emptyStrin
 
 import java.io.InputStream;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.InputStreamEntity;
 import org.springframework.context.annotation.Scope;
@@ -34,8 +33,8 @@ import org.talend.dataprep.exception.error.APIErrorCodes;
 @Scope("request")
 public class UpdateDataSet extends GenericCommand<String> {
 
-    private UpdateDataSet(HttpClient client, String id, InputStream dataSetContent) {
-        super(PreparationAPI.DATASET_GROUP, client);
+    private UpdateDataSet(String id, InputStream dataSetContent) {
+        super(PreparationAPI.DATASET_GROUP);
         execute(() -> {
             final HttpPut put = new HttpPut(datasetServiceUrl + "/datasets/" + id); //$NON-NLS-1$ //$NON-NLS-2$
             put.setHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE);

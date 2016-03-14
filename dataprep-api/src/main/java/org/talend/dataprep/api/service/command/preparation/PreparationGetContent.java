@@ -18,7 +18,6 @@ import static org.talend.dataprep.api.service.command.common.Defaults.pipeStream
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.springframework.context.annotation.Scope;
@@ -50,23 +49,21 @@ public class PreparationGetContent extends PreparationCommand<InputStream> {
     /**
      * Private constructor to ensure the IoC.
      *
-     * @param client the http client to use.
      * @param id the preparation id.
      * @param version the preparation version.
      */
-    private PreparationGetContent(HttpClient client, String id, String version) {
-        this(client, id, version, null);
+    private PreparationGetContent(String id, String version) {
+        this(id, version, null);
     }
 
     /**
      * Constructor with sample size specified.
      *
-     * @param client the http client to use.
      * @param id the preparation id.
      * @param version the preparation version.
      */
-    private PreparationGetContent(HttpClient client, String id, String version, Long sample) {
-        super(APIService.PREPARATION_GROUP, client);
+    private PreparationGetContent(String id, String version, Long sample) {
+        super(APIService.PREPARATION_GROUP);
         this.id = id;
         this.version = version;
         this.sample = sample;

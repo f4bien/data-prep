@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ContentType;
@@ -45,11 +44,9 @@ public abstract class PreviewAbstract extends PreparationCommand<InputStream> {
 
     /**
      * Default constructor.
-     * 
-     * @param client the http client to use.
      */
-    public PreviewAbstract(final HttpClient client) {
-        super(APIService.PREPARATION_GROUP, client);
+    public PreviewAbstract() {
+        super(APIService.PREPARATION_GROUP);
     }
 
     @Override
@@ -68,7 +65,7 @@ public abstract class PreviewAbstract extends PreparationCommand<InputStream> {
 
         final String paramsAsJson;
         try {
-            paramsAsJson = builder.build().writer().writeValueAsString(parameters);
+            paramsAsJson = objectMapper.writer().writeValueAsString(parameters);
         } catch (JsonProcessingException e) {
             throw new TDPException(TransformationErrorCodes.UNABLE_TO_PERFORM_PREVIEW, e);
         }

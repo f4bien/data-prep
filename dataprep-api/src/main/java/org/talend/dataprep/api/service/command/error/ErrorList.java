@@ -18,7 +18,6 @@ import static org.talend.dataprep.api.service.command.common.Defaults.pipeStream
 
 import java.io.InputStream;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.springframework.context.annotation.Scope;
@@ -40,12 +39,11 @@ public class ErrorList extends GenericCommand<InputStream> {
     /**
      * Private constructor.
      *
-     * @param client the http client to use to reach the api.
      * @param type the api type.
      * @param groupKey the command group key.
      */
-    private ErrorList(HttpClient client, HystrixCommandGroupKey groupKey, ServiceType type) {
-        super(groupKey, client);
+    private ErrorList(HystrixCommandGroupKey groupKey, ServiceType type) {
+        super(groupKey);
         execute(() -> onExecute(type));
         onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_LIST_ERRORS, e));
         on(HttpStatus.NO_CONTENT, HttpStatus.ACCEPTED).then(emptyStream());

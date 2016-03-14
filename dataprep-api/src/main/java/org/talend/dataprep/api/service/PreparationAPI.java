@@ -61,8 +61,7 @@ public class PreparationAPI extends APIService {
             LOG.debug("Listing preparations (pool: {} )...", getConnectionStats());
         }
         PreparationList.Format listFormat = PreparationList.Format.valueOf(format.toUpperCase());
-        HttpClient client = getClient();
-        HystrixCommand<InputStream> command = getCommand(PreparationList.class, client, listFormat);
+        HystrixCommand<InputStream> command = getCommand(PreparationList.class, listFormat);
         try (InputStream commandResult = command.execute()){
             HttpResponseContext.header("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
             IOUtils.copyLarge(commandResult, output);
@@ -79,7 +78,7 @@ public class PreparationAPI extends APIService {
      * Returns a list containing all data sets metadata that are compatible with a preparation identified by
      * <tt>preparationId</tt>: its id. If no compatible data set is found an empty list is returned. The base data set
      * of the preparation with id <tt>preparationId</tt> is never returned in the list.
-     * 
+     *
      * @param preparationId the specified preparation id
      * @param sort the sort criterion: either name or date.
      * @param order the sorting order: either asc or desc
@@ -94,7 +93,6 @@ public class PreparationAPI extends APIService {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Looking for base data set Id (pool: {} )...", getConnectionStats());
         }
-        HttpClient client = getClient();
 
         try {
             // get the preparation
@@ -108,7 +106,7 @@ public class PreparationAPI extends APIService {
 
             // to list compatible datasets
             String dataSetId = preparation.getDataSetId();
-            HystrixCommand<InputStream> listCommand = getCommand(CompatibleDataSetList.class, client, dataSetId, sort, order);
+            HystrixCommand<InputStream> listCommand = getCommand(CompatibleDataSetList.class, dataSetId, sort, order);
             InputStream content = listCommand.execute();
             IOUtils.copyLarge(content, output);
             output.flush();
@@ -128,8 +126,7 @@ public class PreparationAPI extends APIService {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating preparation (pool: {} )...", getConnectionStats());
         }
-        HttpClient client = getClient();
-        PreparationCreate preparationCreate = getCommand(PreparationCreate.class, client, preparation);
+        PreparationCreate preparationCreate = getCommand(PreparationCreate.class, preparation);
         final String preparationId = preparationCreate.execute();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Created preparation (pool: {} )...", getConnectionStats());
@@ -146,8 +143,7 @@ public class PreparationAPI extends APIService {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Updating preparation (pool: {} )...", getConnectionStats());
         }
-        HttpClient client = getClient();
-        PreparationUpdate preparationUpdate = getCommand(PreparationUpdate.class, client, id, preparation);
+        PreparationUpdate preparationUpdate = getCommand(PreparationUpdate.class, id, preparation);
         final String preparationId = preparationUpdate.execute();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Updated preparation (pool: {} )...", getConnectionStats());
@@ -163,8 +159,7 @@ public class PreparationAPI extends APIService {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Deleting preparation (pool: {} )...", getConnectionStats());
         }
-        HttpClient client = getClient();
-        PreparationDelete preparationDelete = getCommand(PreparationDelete.class, client, id);
+        PreparationDelete preparationDelete = getCommand(PreparationDelete.class, id);
         final String preparationId = preparationDelete.execute();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Deleted preparation (pool: {} )...", getConnectionStats());
@@ -181,8 +176,7 @@ public class PreparationAPI extends APIService {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Cloning preparation (pool: {} )...", getConnectionStats());
         }
-        HttpClient client = getClient();
-        PreparationClone preparationClone = getCommand(PreparationClone.class, client, id);
+        PreparationClone preparationClone = getCommand(PreparationClone.class, id);
         String preparationId = preparationClone.execute();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Cloned preparation (pool: {} )...", getConnectionStats());
@@ -198,8 +192,8 @@ public class PreparationAPI extends APIService {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Retrieving preparation details (pool: {} )...", getConnectionStats());
         }
-        HttpClient client = getClient();
-        HystrixCommand<InputStream> command = getCommand(PreparationGet.class, client, preparationId);
+
+        HystrixCommand<InputStream> command = getCommand(PreparationGet.class, preparationId);
         try (InputStream commandResult = command.execute()) {
             // You cannot use Preparation object mapper here: to serialize steps & actions, you'd need a version
             // repository not available at API level. Code below copies command result direct to response.
@@ -224,14 +218,13 @@ public class PreparationAPI extends APIService {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Retrieving preparation content (pool: {} )...", getConnectionStats());
         }
-        HttpClient client = getClient();
         Long sampleValue;
         try {
             sampleValue = Long.parseLong(sample);
         } catch (NumberFormatException e) {
             sampleValue = null;
         }
-        HystrixCommand<InputStream> command = getCommand(PreparationGetContent.class, client, preparationId, version,
+        HystrixCommand<InputStream> command = getCommand(PreparationGetContent.class, preparationId, version,
                 sampleValue);
         try (InputStream preparationContent = command.execute()) {
             IOUtils.copyLarge(preparationContent, output);
@@ -255,8 +248,8 @@ public class PreparationAPI extends APIService {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Adding action to preparation (pool: {} )...", getConnectionStats());
         }
-        final HttpClient client = getClient();
-        final HystrixCommand<Void> command = getCommand(PreparationAddAction.class, client, preparationId, step);
+
+        final HystrixCommand<Void> command = getCommand(PreparationAddAction.class, preparationId, step);
         command.execute();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Added action to preparation (pool: {} )...", getConnectionStats());
@@ -277,8 +270,8 @@ public class PreparationAPI extends APIService {
             LOG.debug("Updating preparation action at step #{} (pool: {} )...", stepId, //
                     getConnectionStats());
         }
-        final HttpClient client = getClient();
-        final HystrixCommand<Void> command = getCommand(PreparationUpdateAction.class, client, preparationId, stepId, step);
+
+        final HystrixCommand<Void> command = getCommand(PreparationUpdateAction.class, preparationId, stepId, step);
         command.execute();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Updated preparation action at step #{} (pool: {} )...", stepId, //
@@ -298,8 +291,8 @@ public class PreparationAPI extends APIService {
             LOG.debug("Deleting preparation action at step #{} (pool: {} ) ...", stepId, //
                     getConnectionStats());
         }
-        final HttpClient client = getClient();
-        final HystrixCommand<Void> command = getCommand(PreparationDeleteAction.class, client, preparationId, stepId);
+
+        final HystrixCommand<Void> command = getCommand(PreparationDeleteAction.class, preparationId, stepId);
         command.execute();
 
         if (LOG.isDebugEnabled()) {
@@ -321,8 +314,7 @@ public class PreparationAPI extends APIService {
             LOG.debug("Moving preparation #{} head to step '{}'...", preparationId, headId);
         }
 
-        final HttpClient client = getClient();
-        final HystrixCommand<Void> command = getCommand(PreparationMoveHead.class, client, preparationId, headId);
+        final HystrixCommand<Void> command = getCommand(PreparationMoveHead.class, preparationId, headId);
         command.execute();
 
         if (LOG.isDebugEnabled()) {
@@ -339,7 +331,7 @@ public class PreparationAPI extends APIService {
     @Timed
     public void previewDiff(@RequestBody
     final PreviewDiffInput input, final OutputStream output) {
-        final HystrixCommand<InputStream> transformation = getCommand(PreviewDiff.class, getClient(), input);
+        final HystrixCommand<InputStream> transformation = getCommand(PreviewDiff.class, input);
         try (InputStream commandResult = transformation.execute()){
             IOUtils.copyLarge(commandResult, output);
             output.flush();
@@ -352,7 +344,7 @@ public class PreparationAPI extends APIService {
     @ApiOperation(value = "Get a preview diff between the same step of the same preparation but with one step update.")
     public void previewUpdate(@RequestBody
     final PreviewUpdateInput input, final OutputStream output) {
-        final HystrixCommand<InputStream> transformation = getCommand(PreviewUpdate.class, getClient(), input);
+        final HystrixCommand<InputStream> transformation = getCommand(PreviewUpdate.class, input);
         try (InputStream commandResult = transformation.execute()){
             IOUtils.copyLarge(commandResult, output);
             output.flush();
@@ -366,7 +358,7 @@ public class PreparationAPI extends APIService {
     public void previewAdd(@RequestBody
     @Valid
     final PreviewAddInput input, final OutputStream output) {
-        final HystrixCommand<InputStream> transformation = getCommand(PreviewAdd.class, getClient(), input);
+        final HystrixCommand<InputStream> transformation = getCommand(PreviewAdd.class, input);
         try (InputStream commandResult = transformation.execute()){
             IOUtils.copyLarge(commandResult, output);
             output.flush();

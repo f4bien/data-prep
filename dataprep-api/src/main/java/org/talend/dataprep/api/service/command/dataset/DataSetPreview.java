@@ -22,7 +22,6 @@ import java.util.function.BiFunction;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
@@ -40,8 +39,8 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 @Scope("request")
 public class DataSetPreview extends GenericCommand<InputStream> {
 
-    public DataSetPreview(HttpClient client, String dataSetId, boolean metadata, String sheetName) {
-        super(PreparationAPI.TRANSFORM_GROUP, client);
+    public DataSetPreview(String dataSetId, boolean metadata, String sheetName) {
+        super(PreparationAPI.TRANSFORM_GROUP);
         execute(() -> onExecute(dataSetId, metadata, sheetName));
         onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_DATASET_CONTENT, e,
                 ExceptionContext.build().put("id", dataSetId)));

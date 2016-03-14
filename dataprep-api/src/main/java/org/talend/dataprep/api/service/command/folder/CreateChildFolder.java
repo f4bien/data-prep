@@ -19,7 +19,6 @@ import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_CREATE
 import java.io.InputStream;
 import java.net.URISyntaxException;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
@@ -36,8 +35,8 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 @Scope("request")
 public class CreateChildFolder extends GenericCommand<InputStream> {
 
-    public CreateChildFolder(HttpClient client, String path) {
-        super(APIService.DATASET_GROUP, client);
+    public CreateChildFolder(String path) {
+        super(APIService.DATASET_GROUP);
         execute(() -> onExecute(path));
         onError(e -> new TDPException(UNABLE_TO_CREATE_FOLDER, e, ExceptionContext.build()));
         on(HttpStatus.OK).then(pipeStream());

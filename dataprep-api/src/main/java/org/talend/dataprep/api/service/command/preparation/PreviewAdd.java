@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.client.HttpClient;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Action;
@@ -37,11 +36,10 @@ public class PreviewAdd extends PreviewAbstract {
     /**
      * Default constructor.
      *
-     * @param client the http client to use.
      * @param input the parameters to perform the request.
      */
-    public PreviewAdd(final HttpClient client, final PreviewAddInput input) {
-        super(client);
+    public PreviewAdd(final PreviewAddInput input) {
+        super();
         this.input = input;
     }
 

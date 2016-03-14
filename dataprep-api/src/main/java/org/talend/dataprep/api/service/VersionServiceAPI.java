@@ -18,7 +18,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.http.client.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -79,8 +78,7 @@ public class VersionServiceAPI extends APIService {
      * @return the version of the called service
      */
     private Version callVersionService(String serviceUrl, String serviceName) {
-        HttpClient client = getClient();
-        HystrixCommand<InputStream> versionCommand = getCommand(VersionCommand.class, client, serviceUrl);
+        HystrixCommand<InputStream> versionCommand = getCommand(VersionCommand.class, serviceUrl);
         try (InputStream content = versionCommand.execute()) {
             final Version version = builder.build().readerFor(Version.class).readValue(content);
             version.setServiceName(serviceName);

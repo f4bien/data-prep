@@ -12,7 +12,6 @@
 //  ============================================================================
 package org.talend.dataprep.api.service.command.dataset;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPut;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -32,8 +31,8 @@ import org.talend.dataprep.exception.error.APIErrorCodes;
 @Scope("request")
 public class SetFavorite extends GenericCommand<String> {
 
-    private SetFavorite(HttpClient client, String dataSetId, boolean unset) {
-        super(PreparationAPI.DATASET_GROUP, client);
+    private SetFavorite(String dataSetId, boolean unset) {
+        super(PreparationAPI.DATASET_GROUP);
         execute(() -> new HttpPut(datasetServiceUrl + "/datasets/" + dataSetId + "/favorite?unset=" + unset));
         onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_SET_FAVORITE_DATASET, e,
                 ExceptionContext.build().put("id", dataSetId)));

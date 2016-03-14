@@ -18,7 +18,6 @@ import static org.talend.dataprep.api.service.command.common.Defaults.pipeStream
 
 import java.io.InputStream;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -36,8 +35,8 @@ public class VersionCommand extends GenericCommand<InputStream> {
 
     public static final HystrixCommandGroupKey VERSION_GROUP = HystrixCommandGroupKey.Factory.asKey("version"); //$NON-NLS-1$
 
-    private VersionCommand(HttpClient client, String serviceUrl) {
-        super(VERSION_GROUP, client);
+    private VersionCommand(String serviceUrl) {
+        super(VERSION_GROUP);
 
         execute(() -> {
             String url = serviceUrl + "/version";

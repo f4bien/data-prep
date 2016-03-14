@@ -19,7 +19,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.InputStreamEntity;
@@ -39,8 +38,8 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 @Scope("request")
 public class PreparationAddAction extends PreparationCommand<Void> {
 
-    private PreparationAddAction(final HttpClient client, final String preparationId, final AppendStep step) {
-        super(APIService.PREPARATION_GROUP, client);
+    private PreparationAddAction(final String preparationId, final AppendStep step) {
+        super(APIService.PREPARATION_GROUP);
         execute(() -> onExecute(preparationId, step));
         on(HttpStatus.OK).then(asNull());
     }
@@ -50,7 +49,7 @@ public class PreparationAddAction extends PreparationCommand<Void> {
             final StepDiff diff = getDiffMetadata(preparationId, "head", step.getActions());
             step.setDiff(diff);
             final HttpPost actionAppend = new HttpPost(preparationServiceUrl + "/preparations/" + preparationId + "/actions"); //$NON-NLS-1$ //$NON-NLS-2$
-            final String stepAsString = builder.build().writeValueAsString(step);
+            final String stepAsString = objectMapper.writeValueAsString(step);
             final InputStream stepInputStream = new ByteArrayInputStream(stepAsString.getBytes());
             actionAppend.setHeader(new BasicHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)); //$NON-NLS-1$
             actionAppend.setEntity(new InputStreamEntity(stepInputStream));

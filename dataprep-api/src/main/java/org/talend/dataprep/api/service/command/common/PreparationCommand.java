@@ -25,12 +25,9 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
@@ -44,21 +41,17 @@ import org.talend.dataprep.transformation.preview.api.PreviewParameters;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 
 public abstract class PreparationCommand<T> extends GenericCommand<T> {
-
-    @Autowired
-    protected Jackson2ObjectMapperBuilder builder;
 
     /** The root step. */
     @Resource(name = "rootStep")
     private Step rootStep;
 
 
-    protected PreparationCommand(final HystrixCommandGroupKey groupKey, final HttpClient client) {
-        super(groupKey, client);
+    protected PreparationCommand(final HystrixCommandGroupKey groupKey) {
+        super(groupKey);
     }
 
     /**
@@ -88,12 +81,11 @@ public abstract class PreparationCommand<T> extends GenericCommand<T> {
         final String uri = transformationServiceUrl + "/transform/diff/metadata";
         final HttpPost transformationCall = new HttpPost(uri);
 
-        final ObjectMapper mapper = builder.build();
         try {
             transformationCall
-                    .setEntity(new StringEntity(mapper.writer().writeValueAsString(previewParameters), APPLICATION_JSON));
+                    .setEntity(new StringEntity(objectMapper.writer().writeValueAsString(previewParameters), APPLICATION_JSON));
             final InputStream diffInputStream = client.execute(transformationCall).getEntity().getContent();
-            return mapper.readValue(diffInputStream, StepDiff.class);
+            return objectMapper.readValue(diffInputStream, StepDiff.class);
         }
         finally {
             transformationCall.releaseConnection();
@@ -123,7 +115,7 @@ public abstract class PreparationCommand<T> extends GenericCommand<T> {
             }
             // parsre the preparation
             InputStream content = response.getEntity().getContent();
-            return builder.build().readerFor(Preparation.class).readValue(content);
+            return objectMapper.readerFor(Preparation.class).readValue(content);
         } finally {
             preparationRetrieval.releaseConnection();
         }
@@ -140,7 +132,7 @@ public abstract class PreparationCommand<T> extends GenericCommand<T> {
         final HttpGet datasetRetrieval = new HttpGet(datasetServiceUrl + "/datasets/" + datasetId + "/metadata");
         try {
             InputStream content = client.execute(datasetRetrieval).getEntity().getContent();
-            final DataSet dataset = builder.build().readerFor(DataSet.class).readValue(content);
+            final DataSet dataset = objectMapper.readerFor(DataSet.class).readValue(content);
             return dataset.getMetadata();
         } finally {
             datasetRetrieval.releaseConnection();
@@ -154,7 +146,7 @@ public abstract class PreparationCommand<T> extends GenericCommand<T> {
      * @return the serialized actions
      */
     protected String serializeActions(final Collection<Action> stepActions) throws JsonProcessingException {
-        return "{\"actions\": " + builder.build().writeValueAsString(stepActions) + "}";
+        return "{\"actions\": " + objectMapper.writeValueAsString(stepActions) + "}";
     }
 
     /**
@@ -164,7 +156,7 @@ public abstract class PreparationCommand<T> extends GenericCommand<T> {
      * @return the serialized and encoded list
      */
     protected String serializeIds(final List<Integer> listToEncode) throws JsonProcessingException {
-        return builder.build().writeValueAsString(listToEncode);
+        return objectMapper.writeValueAsString(listToEncode);
     }
 
     protected List<Action> getPreparationActions(Preparation preparation, String stepId) throws IOException {
@@ -176,7 +168,7 @@ public abstract class PreparationCommand<T> extends GenericCommand<T> {
                 + "/actions/" + stepId);
         try {
             InputStream content = client.execute(actionsRetrieval).getEntity().getContent();
-            return builder.build() //
+            return objectMapper //
                     .readerFor(new TypeReference<List<Action>>() { //
                     }) //
                     .readValue(content);

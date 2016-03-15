@@ -28,12 +28,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.context.WebApplicationContext;
@@ -47,6 +48,7 @@ import org.talend.dataprep.security.Security;
 @SpringApplicationConfiguration(classes = Application.class)
 @WebAppConfiguration
 @IntegrationTest
+@TestPropertySource(properties = {"security.mode=genericCommandTest"})
 public class GenericCommandTest {
 
     private static TDPException lastException;
@@ -250,7 +252,7 @@ public class GenericCommandTest {
     }
 
     @Component
-    @Primary // to override default NoOpSecurity
+    @ConditionalOnProperty(name = "security.mode", havingValue = "genericCommandTest", matchIfMissing = false)
     private static class TestSecurity implements Security {
 
         @Override

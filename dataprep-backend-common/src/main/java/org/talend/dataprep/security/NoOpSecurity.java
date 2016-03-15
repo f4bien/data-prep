@@ -13,9 +13,11 @@
 
 package org.talend.dataprep.security;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Component
+@ConditionalOnProperty(name = "security.mode", havingValue = "none", matchIfMissing = true)
 public class NoOpSecurity implements Security {
 
     /**

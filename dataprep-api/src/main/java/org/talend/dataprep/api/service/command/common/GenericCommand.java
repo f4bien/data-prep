@@ -122,7 +122,7 @@ public class GenericCommand<T> extends HystrixCommand<T> {
         final HttpRequestBase request = httpCall.get();
 
         // update request header with security token
-        String authenticationToken o= security.getAuthenticationToken();
+        String authenticationToken = security.getAuthenticationToken();
         if (StringUtils.isNotBlank(authenticationToken)) {
             request.addHeader(AUTHORIZATION, authenticationToken);
         }

@@ -25,7 +25,7 @@ import org.talend.dataprep.user.store.UserDataRepository;
  */
 @Component
 @ConditionalOnProperty(name = "user.data.store", havingValue = "in-memory", matchIfMissing = false)
-public class InMemoryUserDataRepository implements UserDataRepository {
+public class InMemoryUserDataRepository implements UserDataRepository<UserData> {
 
     /** Where user data is stored. */
     private final Map<String, UserData> store = new HashMap<>();

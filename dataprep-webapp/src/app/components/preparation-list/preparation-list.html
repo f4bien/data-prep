@@ -28,11 +28,36 @@
                 <span translate-once="LAST_MODIFICATION"></span><span translate-once="COLON"></span>{{preparation.lastModificationDate | TDPMoment}}
             </p>
 
-            <p class="details">
-                <span class="important name one-line" title="{{preparation.dataset.name}}">{{preparation.dataset.name}}</span>&nbsp;- {{ preparation.dataset.records}} <span translate-once="ROWS"></span>
-            </p>
-            <p class="details">
-                <span class="important">{{preparation.steps.length - 1}}</span> <span class="important" translate-once="STEPS"></span> <span translate-once="RECIPE"></span>
+
+            <div class="base-dataset">
+                <talend-dropdown close-on-select="true" on-open="preparationListCtrl.getCandidateDatasets(preparation.id)">
+                    <div class="dropdown-container">
+                        <div class="dropdown-action">
+                            <div class="dropdown-button"><span data-icon="E"></span></div>
+                        </div>
+                        <ul class="dropdown-menu inventory inventory-list" ng-show="preparationListCtrl.candidateDatasets.length">
+                            <li class="candidate-dataset-row" ng-repeat="candidateDataset in preparationListCtrl.candidateDatasets track by $index">
+                                <inventory-item
+                                        ng-click="preparationListCtrl.replaceBaseDataset(candidateDataset.id, preparation.id)"
+                                        type="dataset"
+                                        item="candidateDataset"
+                                        details="INVENTORY_DETAILS"
+                                        toggle-favorite="angular.noop">
+                                </inventory-item>
+                            </li>
+                        </ul>
+                    </div>
+                </talend-dropdown>
+
+                <p class="base-dataset-name">
+                    <span class="important name one-line" title="{{preparation.dataset.name}}">{{preparation.dataset.name}}</span>&nbsp;- {{ preparation.dataset.records}} <span translate-once="ROWS"></span>
+                </p>
+            </div>
+
+            <p>
+                <span class="important">{{preparation.steps.length - 1}}</span>
+                <span class="important" translate-once="STEPS"></span>
+                <span translate-once="RECIPE"></span>
             </p>
         </div>
 
@@ -41,6 +66,5 @@
             <a class="clone-btn" data-icon="B" ng-click="preparationListCtrl.clone(preparation)" id="clone_btn_{{preparation.id}}"></a>
             <a class="trash" data-icon="e" ng-click="preparationListCtrl.remove(preparation)"></a>
         </div>
-
     </div>
 </div>

@@ -90,7 +90,7 @@ export default function TalendDropdown($window, $timeout) {
                 function showMenu() {
                     menu.addClass('show-menu');
                     positionMenu();
-                    ctrl.onOpen();
+                    $timeout(ctrl.onOpen);
                     windowElement.on('scroll', positionMenu);
 
                     setFocusOn(menu);

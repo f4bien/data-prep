@@ -36,6 +36,7 @@ export default function PreparationService($q, state, StorageService, Preparatio
         clone: PreparationListService.clone,
         delete: deletePreparation,
         setName: setName,
+        getCandidateDatasets: getCandidateDatasets,
 
         //preparation steps lifecycle
         copyImplicitParameters: copyImplicitParameters,
@@ -129,6 +130,18 @@ export default function PreparationService($q, state, StorageService, Preparatio
                 StorageService.moveAggregations(preparation.dataSetId, preparationId, preparation.id);
                 return preparation;
             });
+    }
+
+    /**
+     * @ngdoc method
+     * @name getCandidateDatasets
+     * @methodOf data-prep.services.preparation.service:PreparationService
+     * @param {string} preparationId The preparation id
+     * @description get all the candidate datasets to replace the current one
+     * @returns {promise} The GET promise
+     */
+    function getCandidateDatasets(preparationId) {
+        return PreparationListService.getCandidateDatasets(preparationId);
     }
 
     /**

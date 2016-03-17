@@ -1,15 +1,15 @@
 /*  ============================================================================
 
-  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+ Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 
-  This source code is available under agreement available at
-  https://github.com/Talend/data-prep/blob/master/LICENSE
+ This source code is available under agreement available at
+ https://github.com/Talend/data-prep/blob/master/LICENSE
 
-  You should have received a copy of the agreement
-  along with this program; if not, write to Talend SA
-  9 rue Pages 92150 Suresnes, France
+ You should have received a copy of the agreement
+ along with this program; if not, write to Talend SA
+ 9 rue Pages 92150 Suresnes, France
 
-  ============================================================================*/
+ ============================================================================*/
 
 /**
  * @ngdoc controller
@@ -22,7 +22,7 @@
  * @requires data-prep.services.utils.service:MessageService
  * @requires talend.widget.service:TalendConfirmService
  */
-export default function PreparationListCtrl($rootScope, $state, state, StateService,
+export default function PreparationListCtrl($timeout, $rootScope, $state, state, StateService,
                                             PreparationService, MessageService, TalendConfirmService) {
     'ngInject';
 
@@ -104,4 +104,22 @@ export default function PreparationListCtrl($rootScope, $state, state, StateServ
                 $rootScope.$emit('talend.loading.stop');
             });
     };
+
+    /**
+     * @ngdoc method
+     * @name getCandidateDatasets
+     * @methodOf data-prep.preparation-list.controller:PreparationListCtrl
+     * @param {String} preparationId - the preparation Id
+     * @description populates the list of the candidates datasets
+     */
+    vm.getCandidateDatasets = function getCandidateDatasets(preparationId) {
+        PreparationService.getCandidateDatasets(preparationId)
+            .then(function (candidateDatasets) {
+                vm.candidateDatasets = candidateDatasets;
+            });
+    };
+
+    vm.replaceBaseDataset = function replaceBaseDataset(datasetId, preparationId){
+        console.log('send put query to replace the dataset');
+    }
 }

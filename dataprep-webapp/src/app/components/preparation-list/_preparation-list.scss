@@ -80,12 +80,72 @@
       @include ellipsis(210px);
     }
 
+    .base-dataset {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+    }
+
+    .candidate-datasets {
+      width: 32px;
+      padding: 0;
+      margin: 0;
+      font-size: 14px;
+
+      .line-separator {
+        display: none;
+      }
+
+      .button-dropdown,
+      .button-dropdown button.button-dropdown-main,
+      .button-dropdown button.button-dropdown-side {
+        border: none;
+        background: transparent;
+        padding: 0;
+        color: $important-color;
+        @include justify-content(flex-start);
+      }
+
+      .dropdown-menu {
+        width: 530px;
+
+        .inventory-list {
+          height: 350px;
+          overflow-y: auto;
+          .inventory-item {
+            width: 500px;
+          }
+          .candidate-dataset-row {
+            @include display(flex);
+            @include flex-direction(row);
+            @include align-items(center);
+            @include flex-basis(72px);
+            @include flex-grow(0);
+            @include flex-shrink(0);
+            border-bottom: none;
+
+            inventory-item {
+              @include flex-basis(500px);
+              @include flex-grow(1);
+              @include flex-shrink(1);
+              .inventory-icon {
+                padding: 0 3px;
+              }
+              .btn-icon:hover {
+                background-color: transparent;
+              }
+              .btn-transparent:hover {
+                background-color: transparent;
+              }
+            }
+          }
+        }
+      }
+
+    }
+
     .information {
       font-size: .8em;
-
-      .important {
-        color: $important-color;
-      }
 
       .title {
         font-size: 1.4em;
@@ -99,13 +159,20 @@
         }
       }
 
-      .details {
-        margin-bottom: 5px;
-        padding-left: 10px;
+      .base-dataset-name {
+        padding: 10px;
 
         .name {
           max-width: 120px;
           float: left;
+        }
+      }
+
+      p{
+        margin: 0;
+
+        .important {
+          color: $important-color;
         }
       }
     }
@@ -128,16 +195,6 @@
         font-size: 0.8em;
         display: none;
       }
-
-      &.check-btn {
-        margin-left: 5px;
-        color: $white;
-        background-color: $dark-green;
-        font-size: .5em;
-        &:hover
-        { background-color: darken($dark-green, 10%); }
-      }
-
     }
   }
 }

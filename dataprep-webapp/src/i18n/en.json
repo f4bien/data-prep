@@ -69,6 +69,8 @@
   "PREPARATION_RENAME_SUCCESS": "The preparation has been renamed.",
   "PREPARATION_COPYING_SUCCESS_TITLE": "Preparation copying",
   "PREPARATION_COPYING_SUCCESS": "The preparation has been copied.",
+  "APPLY_PREPARATION_ON_ANOTHER_DATASET": "Apply this preparation on another dataset",
+  "LOCATED_IN_FOLDER": "is located in: ",
 
   "_comment": "Datagrid transformations",
   "RECIPE_ITEM_ON_COL": "on column <b>{{columnName}}</b>",

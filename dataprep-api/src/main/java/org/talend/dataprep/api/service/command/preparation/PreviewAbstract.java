@@ -13,7 +13,7 @@
 
 package org.talend.dataprep.api.service.command.preparation;
 
-import static org.talend.dataprep.api.service.command.common.Defaults.pipeStream;
+import static org.talend.dataprep.command.Defaults.pipeStream;
 
 import java.io.InputStream;
 import java.util.Collection;

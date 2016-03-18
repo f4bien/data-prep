@@ -13,14 +13,14 @@
 
 package org.talend.dataprep.api.service.command.preparation;
 
-import static org.talend.dataprep.api.service.command.common.Defaults.asNull;
+import static org.talend.dataprep.command.Defaults.asNull;
 
 import org.apache.http.client.methods.HttpPut;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.service.APIService;
-import org.talend.dataprep.api.service.command.common.GenericCommand;
+import org.talend.dataprep.command.GenericCommand;
 
 @Component
 @Scope("request")

@@ -13,6 +13,8 @@
 
 package org.talend.dataprep.api.service.command.common;
 
+import org.talend.dataprep.command.GenericCommand;
+
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 

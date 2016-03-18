@@ -35,6 +35,7 @@ import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.Step;
 import org.talend.dataprep.api.preparation.StepDiff;
+import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.PreparationErrorCodes;
 import org.talend.dataprep.transformation.preview.api.PreviewParameters;
@@ -113,7 +114,7 @@ public abstract class PreparationCommand<T> extends GenericCommand<T> {
                 throw new TDPException(PreparationErrorCodes.UNABLE_TO_READ_PREPARATION,
                         ExceptionContext.build().put("id", preparationId).put("version", "head"));
             }
-            // parsre the preparation
+            // parse the preparation
             InputStream content = response.getEntity().getContent();
             return objectMapper.readerFor(Preparation.class).readValue(content);
         } finally {

@@ -1,19 +1,19 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service.command.export;
 
-import static org.talend.dataprep.api.service.command.common.Defaults.pipeStream;
+import static org.talend.dataprep.command.Defaults.pipeStream;
 import static org.talend.dataprep.format.export.ExportFormat.PREFIX;
 import static org.talend.dataprep.format.export.ExportFormat.Parameter.FILENAME_PARAMETER;
 
@@ -64,8 +64,7 @@ public class Export extends PreparationCommand<InputStream> {
             } else if (StringUtils.isNotBlank(input.getPreparationId())) {
                 final Preparation preparation = getPreparation(input.getPreparationId());
                 exportName = preparation.getName();
-            }
- else {
+            } else {
                 exportName = getDatasetMetadata(input.getDatasetId()).getName();
             }
 
@@ -92,8 +91,7 @@ public class Export extends PreparationCommand<InputStream> {
             if (StringUtils.isBlank(input.getDatasetId())) {
                 final Preparation preparation = getPreparation(input.getPreparationId());
                 datasetId = preparation.getDataSetId();
-            }
- else {
+            } else {
                 datasetId = input.getDatasetId();
             }
 
@@ -124,7 +122,5 @@ public class Export extends PreparationCommand<InputStream> {
         }
         return new HttpGet(builder.build());
     }
-
-
 
 }

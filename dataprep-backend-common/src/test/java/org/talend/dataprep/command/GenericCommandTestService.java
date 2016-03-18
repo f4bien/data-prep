@@ -11,13 +11,13 @@
 //
 //  ============================================================================
 
-package org.talend.dataprep.api.service.command.common;
+package org.talend.dataprep.command;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 
 import java.io.IOException;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestHeader;

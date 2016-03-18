@@ -13,7 +13,7 @@
 
 package org.talend.dataprep.api.service.command.dataset;
 
-import static org.talend.dataprep.api.service.command.common.Defaults.asNull;
+import static org.talend.dataprep.command.Defaults.asNull;
 
 import java.io.IOException;
 
@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.service.PreparationAPI;
-import org.talend.dataprep.api.service.command.common.GenericCommand;
+import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;

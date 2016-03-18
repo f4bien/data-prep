@@ -15,7 +15,7 @@ package org.talend.dataprep.api.service.command.preparation;
 
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.talend.dataprep.api.service.command.common.Defaults.asString;
+import static org.talend.dataprep.command.Defaults.asString;
 import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_UPDATE_PREPARATION;
 
 import org.apache.http.client.methods.HttpPut;
@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.service.APIService;
-import org.talend.dataprep.api.service.command.common.GenericCommand;
+import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 

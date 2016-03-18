@@ -13,8 +13,8 @@
 
 package org.talend.dataprep.api.service.command.transformation;
 
-import static org.talend.dataprep.api.service.command.common.Defaults.asNull;
-import static org.talend.dataprep.api.service.command.common.Defaults.pipeStream;
+import static org.talend.dataprep.command.Defaults.asNull;
+import static org.talend.dataprep.command.Defaults.pipeStream;
 
 import java.io.InputStream;
 
@@ -26,7 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.service.PreparationAPI;
-import org.talend.dataprep.api.service.command.common.GenericCommand;
+import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 

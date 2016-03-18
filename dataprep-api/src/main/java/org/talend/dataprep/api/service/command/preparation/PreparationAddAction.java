@@ -13,7 +13,7 @@
 
 package org.talend.dataprep.api.service.command.preparation;
 
-import static org.talend.dataprep.api.service.command.common.Defaults.asNull;
+import static org.talend.dataprep.command.Defaults.asNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

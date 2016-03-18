@@ -11,11 +11,11 @@
 //
 //  ============================================================================
 
-package org.talend.dataprep.api.service.command.common;
+package org.talend.dataprep.command;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.talend.dataprep.api.service.command.common.Defaults.asString;
+import static org.talend.dataprep.command.Defaults.asString;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -38,17 +38,19 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.context.WebApplicationContext;
-import org.talend.dataprep.api.service.APIService;
-import org.talend.dataprep.dataset.Application;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.security.Security;
+import org.talend.dataprep.test.MockTestApplication;
+import org.talend.dataprep.test.ServerConfiguration;
+
+import com.netflix.hystrix.HystrixCommandGroupKey;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
+@SpringApplicationConfiguration(classes = { MockTestApplication.class, ServerConfiguration.class })
+@TestPropertySource(properties = {"security.mode=genericCommandTest", "transformation.service.url=", "preparation.service.url=", "dataset.service.url="})
 @WebAppConfiguration
-@IntegrationTest
-@TestPropertySource(properties = {"security.mode=genericCommandTest"})
+@IntegrationTest({ "server.port=0" })
 public class GenericCommandTest {
 
     private static TDPException lastException;
@@ -244,7 +246,7 @@ public class GenericCommandTest {
     private static class TestCommand extends GenericCommand<String> {
 
         protected TestCommand(String url, Function<Exception, RuntimeException> errorHandling) {
-            super(APIService.DATASET_GROUP);
+            super(HystrixCommandGroupKey.Factory.asKey("dataset"));
             execute(() -> new HttpGet(url));
             onError(errorHandling);
             on(HttpStatus.OK).then(asString());

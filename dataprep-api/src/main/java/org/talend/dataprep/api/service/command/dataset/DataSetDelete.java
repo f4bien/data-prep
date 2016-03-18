@@ -13,7 +13,7 @@
 
 package org.talend.dataprep.api.service.command.dataset;
 
-import static org.talend.dataprep.api.service.command.common.Defaults.asNull;
+import static org.talend.dataprep.command.Defaults.asNull;
 import static org.talend.dataprep.exception.error.APIErrorCodes.DATASET_STILL_IN_USE;
 
 import java.io.IOException;
@@ -30,8 +30,8 @@ import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.service.PreparationAPI;
-import org.talend.dataprep.api.service.command.common.GenericCommand;
 import org.talend.dataprep.api.service.command.preparation.PreparationListForDataSet;
+import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;

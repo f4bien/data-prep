@@ -11,10 +11,9 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.api.service.command.common;
+package org.talend.dataprep.command;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
-import static org.talend.dataprep.api.service.command.common.Defaults.passthrough;
 
 import java.io.IOException;
 import java.util.EnumMap;
@@ -66,7 +65,7 @@ public class GenericCommand<T> extends HystrixCommand<T> {
     private Header[] commandResponseHeaders = new Header[0];
 
     /** Default onError behaviour. */
-    private Function<Exception, RuntimeException> onError = passthrough();
+    private Function<Exception, RuntimeException> onError = Defaults.passthrough();
 
     /** DataPrep security holder. */
     @Autowired

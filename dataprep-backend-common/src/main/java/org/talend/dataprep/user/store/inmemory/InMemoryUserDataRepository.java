@@ -24,7 +24,7 @@ import org.talend.dataprep.user.store.UserDataRepository;
  * In Memory user data store implementation. It is mainly targeted for demo and tests.
  */
 @Component
-@ConditionalOnProperty(name = "user.data.store", havingValue = "in-memory", matchIfMissing = false)
+@ConditionalOnProperty(name = "user.data.store", havingValue = "in-memory")
 public class InMemoryUserDataRepository implements UserDataRepository<UserData> {
 
     /** Where user data is stored. */

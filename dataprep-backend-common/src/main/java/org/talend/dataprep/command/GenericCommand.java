@@ -174,6 +174,7 @@ public class GenericCommand<T> extends HystrixCommand<T> {
      */
     private BiFunction<HttpRequestBase, HttpResponse, T> callOnError(Function<Exception, RuntimeException> onError) {
         return (req, res) -> {
+            LOGGER.trace("request on error {} -> {}", req.toString(), res.getStatusLine());
             final int statusCode = res.getStatusLine().getStatusCode();
             try {
                 JsonErrorCode code = objectMapper.readerFor(JsonErrorCode.class).readValue(res.getEntity().getContent());

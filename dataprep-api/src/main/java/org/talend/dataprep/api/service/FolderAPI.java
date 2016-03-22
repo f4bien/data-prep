@@ -22,13 +22,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.client.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -37,21 +33,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.talend.dataprep.api.folder.FolderContent;
-import org.talend.dataprep.api.service.command.preparation.PreparationListByName;
-import org.talend.dataprep.inventory.Inventory;
 import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.preparation.PreparationDetails;
 import org.talend.dataprep.api.service.command.common.HttpResponse;
 import org.talend.dataprep.api.service.command.folder.*;
-import org.talend.dataprep.api.service.command.preparation.PreparationList;
+import org.talend.dataprep.api.service.command.preparation.PreparationListByName;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.http.HttpResponseContext;
+import org.talend.dataprep.inventory.Inventory;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.metrics.VolumeMetered;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.hystrix.HystrixCommand;
 
 import io.swagger.annotations.ApiOperation;
@@ -243,8 +238,7 @@ public class FolderAPI extends APIService {
             LOG.debug("Listing datasets (pool: {})...", getConnectionStats());
         }
         HttpResponseContext.header("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
-        HttpClient client = getClient();
-        HystrixCommand<InputStream> listCommand = getCommand(FolderDataSetList.class, client, sort, order, folder);
+        HystrixCommand<InputStream> listCommand = getCommand(FolderDataSetList.class, sort, order, folder);
         try (InputStream ios = listCommand.execute()) {
             IOUtils.copyLarge(ios, output);
         } catch (IOException e) {
@@ -269,12 +263,10 @@ public class FolderAPI extends APIService {
             LOG.debug("Listing datasets (pool: {})...", getConnectionStats());
         }
         HttpResponseContext.header("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
-        HttpClient client = getClient();
         Inventory inventory;
         ObjectMapper mapper = builder.build();
-        HystrixCommand<InputStream> matchingName = getCommand(FolderInventorySearch.class, client, path, name);
+        HystrixCommand<InputStream> matchingName = getCommand(FolderInventorySearch.class, path, name);
         try (InputStream ios = matchingName.execute()) {
-
             String jsonMap = IOUtils.toString(ios);
             inventory = mapper.readValue(jsonMap, new TypeReference<Inventory>() {
             });
@@ -285,7 +277,7 @@ public class FolderAPI extends APIService {
         final String rootPath = "/";
 
         if (StringUtils.equals(rootPath, path)) { // preparations are considered to be in the root folder (empty)
-            HystrixCommand<InputStream> command = getCommand(PreparationListByName.class, client, name, false);
+            HystrixCommand<InputStream> command = getCommand(PreparationListByName.class, name, false);
             try (InputStream ios = command.execute()) {
                 String jsonMap = IOUtils.toString(ios);
                 List<Preparation> preparations = mapper.readValue(jsonMap, new TypeReference<ArrayList<Preparation>>() {});

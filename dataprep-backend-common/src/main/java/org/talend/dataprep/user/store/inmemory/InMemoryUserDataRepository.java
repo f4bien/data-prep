@@ -25,16 +25,16 @@ import org.talend.dataprep.user.store.UserDataRepository;
  */
 @Component
 @ConditionalOnProperty(name = "user.data.store", havingValue = "in-memory")
-public class InMemoryUserDataRepository implements UserDataRepository<UserData> {
+public class InMemoryUserDataRepository<U extends UserData> implements UserDataRepository<U> {
 
     /** Where user data is stored. */
-    private final Map<String, UserData> store = new HashMap<>();
+    private final Map<String, U> store = new HashMap<>();
 
     /**
      * @see UserDataRepository#get(String)
      */
     @Override
-    public UserData get(String userId) {
+    public U get(String userId) {
         return store.get(userId);
     }
 
@@ -42,7 +42,7 @@ public class InMemoryUserDataRepository implements UserDataRepository<UserData> 
      * @see UserDataRepository#save(UserData)
      */
     @Override
-    public void save(UserData userData) {
+    public void save(U userData) {
         store.put(userData.getUserId(), userData);
     }
 

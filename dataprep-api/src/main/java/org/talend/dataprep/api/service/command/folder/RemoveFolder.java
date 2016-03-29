@@ -29,7 +29,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
-import org.talend.dataprep.api.service.APIService;
 import org.talend.dataprep.api.service.command.common.HttpResponse;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
@@ -40,7 +39,7 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 public class RemoveFolder extends GenericCommand<HttpResponse> {
 
     public RemoveFolder(String path) {
-        super(APIService.DATASET_GROUP);
+        super(GenericCommand.DATASET_GROUP);
         execute(() -> onExecute(path));
         onError(e -> new TDPException(UNABLE_TO_DELETE_FOLDER, e, ExceptionContext.build()));
         on(OK, CONFLICT).then((httpRequestBase, httpResponse) -> {

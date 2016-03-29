@@ -25,7 +25,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.service.APIService;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
@@ -35,7 +34,7 @@ import org.talend.dataprep.exception.error.APIErrorCodes;
 public class PreparationCreate extends GenericCommand<String> {
 
     private PreparationCreate(Preparation preparation) {
-        super(APIService.PREPARATION_GROUP);
+        super(GenericCommand.PREPARATION_GROUP);
         execute(() -> onExecute(preparation));
         onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_CREATE_PREPARATION, e));
         on(HttpStatus.OK).then(asString());

@@ -26,7 +26,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.service.PreparationAPI;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
@@ -41,7 +40,7 @@ public class DataSetList extends GenericCommand<InputStream> {
     }
 
     private DataSetList(String sort, String order, String folder) {
-        super(PreparationAPI.DATASET_GROUP);
+        super(GenericCommand.DATASET_GROUP);
 
         try {
             execute(() -> onExecute( sort, order, folder));

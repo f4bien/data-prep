@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.talend.daikon.exception.error.ErrorCode;
 import org.talend.dataprep.api.service.command.error.ErrorList;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
@@ -73,19 +74,19 @@ public class CommonAPI extends APIService {
         writeErrorsFromEnum(generator, APIErrorCodes.values());
 
         // get dataset api errors
-        HystrixCommand<InputStream> datasetErrors = getCommand(ErrorList.class, DATASET_GROUP, DATASET);
+        HystrixCommand<InputStream> datasetErrors = getCommand(ErrorList.class, GenericCommand.DATASET_GROUP, DATASET);
         try (InputStream errorsInput = datasetErrors.execute()) {
             writeErrorsFromApi(generator, errorsInput);
         }
 
         // get preparation api errors
-        HystrixCommand<InputStream> preparationErrors = getCommand(ErrorList.class, PREPARATION_GROUP, PREPARATION);
+        HystrixCommand<InputStream> preparationErrors = getCommand(ErrorList.class, GenericCommand.PREPARATION_GROUP, PREPARATION);
         try (InputStream errorsInput = preparationErrors.execute()) {
             writeErrorsFromApi(generator, errorsInput);
         }
 
         // get transformation api errors
-        HystrixCommand<InputStream> transformationErrors = getCommand(ErrorList.class, TRANSFORM_GROUP, TRANSFORMATION);
+        HystrixCommand<InputStream> transformationErrors = getCommand(ErrorList.class, GenericCommand.TRANSFORM_GROUP, TRANSFORMATION);
         try (InputStream errorsInput = transformationErrors.execute()) {
             writeErrorsFromApi(generator, errorsInput);
         }

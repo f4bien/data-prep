@@ -29,9 +29,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.service.PreparationAPI;
 import org.talend.dataprep.api.service.command.common.ChainedCommand;
 import org.talend.dataprep.api.service.command.dataset.DataSetGetMetadata;
+import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -61,7 +61,7 @@ public class SuggestDataSetActions extends ChainedCommand<String, DataSetMetadat
      * @param retrieveMetadata the previous command to execute.
      */
     private SuggestDataSetActions(DataSetGetMetadata retrieveMetadata) {
-        super(PreparationAPI.TRANSFORM_GROUP, retrieveMetadata);
+        super(GenericCommand.TRANSFORM_GROUP, retrieveMetadata);
         execute(this::onExecute);
         onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_SUGGESTED_ACTIONS, e));
         on(HttpStatus.OK).then(onOk());

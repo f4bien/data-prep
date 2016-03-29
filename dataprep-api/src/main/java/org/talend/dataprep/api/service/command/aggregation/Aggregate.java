@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.service.APIService;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -50,7 +49,7 @@ public class Aggregate extends GenericCommand<InputStream> {
      * @param parameters aggregation parameters.
      */
     public Aggregate(final AggregationParameters parameters) {
-        super(APIService.TRANSFORM_GROUP);
+        super(GenericCommand.TRANSFORM_GROUP);
         execute(() -> onExecute(parameters));
         on(HttpStatus.OK).then(pipeStream());
     }

@@ -24,7 +24,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
-import org.talend.dataprep.api.service.PreparationAPI;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
@@ -34,7 +33,7 @@ import org.talend.dataprep.exception.error.APIErrorCodes;
 public class UpdateColumn extends GenericCommand<Void> {
 
     private UpdateColumn(final String dataSetId, final String columnId, final InputStream body) {
-        super(PreparationAPI.DATASET_GROUP);
+        super(GenericCommand.DATASET_GROUP);
         execute(() -> {
             final HttpPost post = new HttpPost(datasetServiceUrl + "/datasets/" + dataSetId + "/column/" + columnId); //$NON-NLS-1$ //$NON-NLS-2$
             post.setHeader("Content-Type", APPLICATION_JSON_VALUE);

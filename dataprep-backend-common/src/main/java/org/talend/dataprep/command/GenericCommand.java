@@ -53,6 +53,13 @@ import com.netflix.hystrix.HystrixCommandGroupKey;
 @Scope("request")
 public class GenericCommand<T> extends HystrixCommand<T> {
 
+    /** Hystrix group used for dataset related commands. */
+    public static final HystrixCommandGroupKey DATASET_GROUP = HystrixCommandGroupKey.Factory.asKey("dataset");
+    /** Hystrix group used for preparation related commands. */
+    public static final HystrixCommandGroupKey PREPARATION_GROUP = HystrixCommandGroupKey.Factory.asKey("preparation");
+    /** Hystrix group used for transformation related commands. */
+    public static final HystrixCommandGroupKey TRANSFORM_GROUP = HystrixCommandGroupKey.Factory.asKey("transform");
+
     /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(GenericCommand.class);
 

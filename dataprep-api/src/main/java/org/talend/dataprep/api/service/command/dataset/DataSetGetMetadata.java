@@ -23,7 +23,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.api.service.PreparationAPI;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
@@ -34,7 +33,7 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 public class DataSetGetMetadata extends GenericCommand<DataSetMetadata> {
 
     private DataSetGetMetadata(String dataSetId) {
-        super(PreparationAPI.DATASET_GROUP);
+        super(GenericCommand.DATASET_GROUP);
         execute(() -> new HttpGet(datasetServiceUrl + "/datasets/" + dataSetId + "/metadata"));
         onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_DATASET_METADATA, e));
         on(HttpStatus.NO_CONTENT).then(asNull());

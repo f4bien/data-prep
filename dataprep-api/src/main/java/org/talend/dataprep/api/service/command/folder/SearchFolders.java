@@ -26,7 +26,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
-import org.talend.dataprep.api.service.APIService;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -36,7 +35,7 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 public class SearchFolders extends GenericCommand<InputStream> {
 
     private SearchFolders(String pathName) {
-        super(APIService.DATASET_GROUP);
+        super(GenericCommand.DATASET_GROUP);
         execute(() -> onExecute(pathName));
         onError(e -> new TDPException(UNABLE_TO_LIST_FOLDERS, e, ExceptionContext.build()));
         on(HttpStatus.OK).then(pipeStream());

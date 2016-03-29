@@ -96,10 +96,11 @@ public abstract class PreparationCommand<T> extends GenericCommand<T> {
     /**
      * Call Preparation Service to get preparation.
      *
-     * @param preparationId - the preparation id
+     * @param preparationId - the preparation id.
      * @return the resulting Json node object
      * @throws java.io.IOException if an error occurs.
      */
+    //TODO should be a command on its own
     protected Preparation getPreparation(final String preparationId) throws IOException {
         if (StringUtils.isEmpty(preparationId)) {
             throw new IllegalArgumentException("Preparation id cannot be empty.");

@@ -26,7 +26,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.service.PreparationAPI;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -36,7 +35,7 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 public class FolderDataSetList extends GenericCommand<InputStream> {
 
     public FolderDataSetList(String sort, String order, String folder) {
-        super(PreparationAPI.TRANSFORM_GROUP);
+        super(GenericCommand.TRANSFORM_GROUP);
         execute(() -> onExecute(sort, order, folder));
         on(HttpStatus.OK).then(pipeStream());
     }

@@ -15,6 +15,7 @@ package org.talend.dataprep.api.service.command.dataset;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.talend.daikon.exception.ExceptionContext.build;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -26,8 +27,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.daikon.exception.ExceptionContext;
-import org.talend.dataprep.api.service.PreparationAPI;
 import org.talend.dataprep.api.service.command.common.HttpResponse;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
@@ -50,7 +49,7 @@ public class MoveDataSet extends GenericCommand<HttpResponse> {
      * @param newName the new name (optional) 
      */
     public MoveDataSet(String dataSetId, String folderPath, String newFolderPath, String newName) {
-        super(PreparationAPI.DATASET_GROUP);
+        super(GenericCommand.DATASET_GROUP);
         execute(() -> {
             try {
                 URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/datasets/move/" + dataSetId);
@@ -63,16 +62,13 @@ public class MoveDataSet extends GenericCommand<HttpResponse> {
                 if (StringUtils.isNotEmpty(newName)) {
                     uriBuilder.addParameter("newName", newName);
                 }
-                HttpPut httpPut = new HttpPut(uriBuilder.build());
-
-                return httpPut;
+                return new HttpPut(uriBuilder.build());
             } catch (URISyntaxException e) {
                 throw new TDPException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
             }
         });
 
-        onError((e) -> new TDPException(APIErrorCodes.UNABLE_TO_COPY_DATASET_CONTENT, e,
-                ExceptionContext.build().put("id", dataSetId)));
+        onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_COPY_DATASET_CONTENT, e, build().put("id", dataSetId)));
 
         on(HttpStatus.OK, HttpStatus.BAD_REQUEST).then((httpRequestBase, httpResponse) -> {
             try {

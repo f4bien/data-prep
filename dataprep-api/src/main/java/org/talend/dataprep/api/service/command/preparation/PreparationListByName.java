@@ -25,7 +25,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.service.APIService;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
@@ -45,7 +44,7 @@ public class PreparationListByName extends GenericCommand<InputStream> {
      * @param exactMatch the specified boolean
      */
     private PreparationListByName(String name, boolean exactMatch) {
-        super(APIService.PREPARATION_GROUP);
+        super(GenericCommand.PREPARATION_GROUP);
         execute(() -> {
             try {
                 URIBuilder uriBuilder = new URIBuilder(preparationServiceUrl + "/preparations");

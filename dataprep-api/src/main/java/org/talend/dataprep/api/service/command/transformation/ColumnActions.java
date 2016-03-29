@@ -25,7 +25,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.service.PreparationAPI;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
@@ -43,7 +42,7 @@ public class ColumnActions extends GenericCommand<InputStream> {
      * @param input the column metadata to get the actions for (in json).
      */
     private ColumnActions(InputStream input) {
-        super(PreparationAPI.TRANSFORM_GROUP);
+        super(GenericCommand.TRANSFORM_GROUP);
         execute(() -> {
             HttpPost post = new HttpPost(transformationServiceUrl + "/actions/column");
             post.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);

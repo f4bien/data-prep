@@ -25,7 +25,6 @@ import org.apache.http.entity.InputStreamEntity;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.service.PreparationAPI;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
@@ -46,7 +45,7 @@ public class CreateOrUpdateDataSet extends GenericCommand<String> {
      * @param dataSetContent the new dataset content.
      */
     private CreateOrUpdateDataSet(String id, String name, InputStream dataSetContent) {
-        super(PreparationAPI.DATASET_GROUP);
+        super(GenericCommand.DATASET_GROUP);
         execute(() -> {
             try {
                 URIBuilder uriBuilder = new URIBuilder(datasetServiceUrl + "/datasets/" + id + "/raw/") //

@@ -25,8 +25,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.service.APIService;
 import org.talend.dataprep.api.service.command.common.PreparationCommand;
+import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.PreparationErrorCodes;
 
@@ -63,7 +63,7 @@ public class PreparationGetContent extends PreparationCommand<InputStream> {
      * @param version the preparation version.
      */
     private PreparationGetContent(String id, String version, Long sample) {
-        super(APIService.PREPARATION_GROUP);
+        super(GenericCommand.PREPARATION_GROUP);
         this.id = id;
         this.version = version;
         this.sample = sample;

@@ -21,7 +21,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.service.APIService;
 import org.talend.dataprep.command.GenericCommand;
 
 @Component
@@ -29,7 +28,7 @@ import org.talend.dataprep.command.GenericCommand;
 public class ExportTypes extends GenericCommand<InputStream> {
 
     private ExportTypes() {
-        super(APIService.TRANSFORM_GROUP);
+        super(GenericCommand.TRANSFORM_GROUP);
         execute(() -> new HttpGet(this.transformationServiceUrl + "/export/formats"));
         on(HttpStatus.OK).then(pipeStream());
     }

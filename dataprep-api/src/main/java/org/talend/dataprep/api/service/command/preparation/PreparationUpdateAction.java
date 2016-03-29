@@ -31,8 +31,8 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.AppendStep;
 import org.talend.dataprep.api.preparation.Preparation;
 import org.talend.dataprep.api.preparation.StepDiff;
-import org.talend.dataprep.api.service.APIService;
 import org.talend.dataprep.api.service.command.common.PreparationCommand;
+import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
@@ -47,7 +47,7 @@ public class PreparationUpdateAction extends PreparationCommand<Void> {
     private final String preparationId;
 
     private PreparationUpdateAction(final String preparationId, final String stepId, final AppendStep updatedStep) {
-        super(APIService.PREPARATION_GROUP);
+        super(GenericCommand.PREPARATION_GROUP);
         this.stepId = stepId;
         this.updatedStep = updatedStep;
         this.preparationId = preparationId;

@@ -22,7 +22,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.service.PreparationAPI;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
@@ -38,7 +37,7 @@ public class DataSetGetEncodings extends GenericCommand<InputStream> {
      * Constructor.
      */
     public DataSetGetEncodings() {
-        super(PreparationAPI.DATASET_GROUP);
+        super(GenericCommand.DATASET_GROUP);
         execute(() -> new HttpGet(datasetServiceUrl + "/datasets/encodings"));
         onError(e -> new TDPException(DataSetErrorCodes.UNABLE_TO_LIST_SUPPORTED_ENCODINGS, e));
         on(HttpStatus.NO_CONTENT).then(emptyStream());

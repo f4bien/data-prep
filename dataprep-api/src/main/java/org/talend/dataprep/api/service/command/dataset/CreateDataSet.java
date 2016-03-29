@@ -26,7 +26,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.error.ErrorCode;
-import org.talend.dataprep.api.service.PreparationAPI;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
@@ -48,7 +47,7 @@ public class CreateDataSet extends GenericCommand<String> {
      * @param dataSetContent Dataset content or import parameters in json for remote datasets.
      */
     private CreateDataSet(String name, String contentType, InputStream dataSetContent, String folderPath) {
-        super(PreparationAPI.DATASET_GROUP);
+        super(GenericCommand.DATASET_GROUP);
         execute(() -> onExecute(name, contentType, dataSetContent, folderPath));
         onError(e -> {
             if (e instanceof TDPException) {

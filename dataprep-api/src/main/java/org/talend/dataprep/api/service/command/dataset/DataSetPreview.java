@@ -29,7 +29,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
-import org.talend.dataprep.api.service.PreparationAPI;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
@@ -40,7 +39,7 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 public class DataSetPreview extends GenericCommand<InputStream> {
 
     public DataSetPreview(String dataSetId, boolean metadata, String sheetName) {
-        super(PreparationAPI.TRANSFORM_GROUP);
+        super(GenericCommand.TRANSFORM_GROUP);
         execute(() -> onExecute(dataSetId, metadata, sheetName));
         onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_DATASET_CONTENT, e,
                 ExceptionContext.build().put("id", dataSetId)));

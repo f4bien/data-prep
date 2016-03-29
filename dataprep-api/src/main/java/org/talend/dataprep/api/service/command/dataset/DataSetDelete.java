@@ -29,7 +29,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.service.PreparationAPI;
 import org.talend.dataprep.api.service.command.preparation.PreparationListForDataSet;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
@@ -57,7 +56,7 @@ public class DataSetDelete extends GenericCommand<Void> {
      * @param dataSetId The dataset id to delete.
      */
     private DataSetDelete(String dataSetId) {
-        super(PreparationAPI.DATASET_GROUP);
+        super(GenericCommand.DATASET_GROUP);
         this.dataSetId = dataSetId;
         execute(() -> onExecute(dataSetId));
         onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_DELETE_DATASET, e,

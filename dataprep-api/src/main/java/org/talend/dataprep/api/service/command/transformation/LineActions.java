@@ -14,7 +14,6 @@
 package org.talend.dataprep.api.service.command.transformation;
 
 import static org.springframework.http.HttpStatus.OK;
-import static org.talend.dataprep.api.service.APIService.TRANSFORM_GROUP;
 import static org.talend.dataprep.command.Defaults.pipeStream;
 
 import java.io.InputStream;

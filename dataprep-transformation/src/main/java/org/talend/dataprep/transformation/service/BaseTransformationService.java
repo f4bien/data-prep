@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.dataset.DataSet;
 import org.talend.dataprep.exception.TDPException;
@@ -39,6 +38,8 @@ import org.talend.dataprep.http.HttpResponseContext;
 import org.talend.dataprep.transformation.api.transformer.TransformerFactory;
 import org.talend.dataprep.transformation.api.transformer.configuration.Configuration;
 import org.talend.dataprep.transformation.format.FormatRegistrationService;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Base class used to share code across all TransformationService implementation.
@@ -68,9 +69,9 @@ public abstract class BaseTransformationService {
     @Autowired
     protected HttpClient httpClient;
 
-    /** The dataprep ready to use jackson object builder. */
+    /** The dataprep ready to use jackson object mapper. */
     @Autowired
-    protected Jackson2ObjectMapperBuilder builder;
+    protected ObjectMapper mapper;
 
     /**
      * Transformation business logic.

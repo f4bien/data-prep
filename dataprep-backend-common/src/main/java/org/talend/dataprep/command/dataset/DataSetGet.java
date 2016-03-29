@@ -1,20 +1,23 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
-package org.talend.dataprep.api.service.command.dataset;
+package org.talend.dataprep.command.dataset;
 
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
+import static org.talend.daikon.exception.ExceptionContext.build;
 import static org.talend.dataprep.command.Defaults.emptyStream;
 import static org.talend.dataprep.command.Defaults.pipeStream;
+import static org.talend.dataprep.exception.error.APIErrorCodes.UNABLE_TO_RETRIEVE_DATASET_CONTENT;
 
 import java.io.InputStream;
 
@@ -22,17 +25,14 @@ import org.apache.http.client.methods.HttpGet;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.daikon.exception.ExceptionContext;
-import org.talend.dataprep.api.service.PreparationAPI;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
-import org.talend.dataprep.exception.error.APIErrorCodes;
 
 /**
  * Command to get a dataset.
  */
 @Component
-@Scope("request")
+@Scope(SCOPE_PROTOTYPE)
 public class DataSetGet extends GenericCommand<InputStream> {
 
     /**
@@ -43,7 +43,7 @@ public class DataSetGet extends GenericCommand<InputStream> {
      * @param sample optional sample size (if null or <=0, the full dataset is returned).
      */
     public DataSetGet(String dataSetId, boolean metadata, Long sample) {
-        super(PreparationAPI.DATASET_GROUP);
+        super(DATASET_GROUP);
         execute(() -> {
             String url = datasetServiceUrl + "/datasets/" + dataSetId + "/content?metadata=" + metadata;
             if (sample != null) {
@@ -51,8 +51,7 @@ public class DataSetGet extends GenericCommand<InputStream> {
             }
             return new HttpGet(url);
         });
-        onError(e -> new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_DATASET_CONTENT, e,
-                ExceptionContext.build().put("id", dataSetId)));
+        onError(e -> new TDPException(UNABLE_TO_RETRIEVE_DATASET_CONTENT, e, build().put("id", dataSetId)));
         on(HttpStatus.NO_CONTENT).then(emptyStream());
         on(HttpStatus.OK).then(pipeStream());
     }

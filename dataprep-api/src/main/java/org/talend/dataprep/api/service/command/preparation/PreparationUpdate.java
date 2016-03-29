@@ -26,7 +26,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.service.APIService;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -38,7 +37,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 public class PreparationUpdate extends GenericCommand<String> {
 
     private PreparationUpdate(String id, Preparation preparation) {
-        super(APIService.PREPARATION_GROUP);
+        super(GenericCommand.PREPARATION_GROUP);
         execute(() -> onExecute(id, preparation));
         onError(e -> new TDPException(UNABLE_TO_UPDATE_PREPARATION, e, ExceptionContext.build().put("id", id)));
         on(HttpStatus.OK).then(asString());

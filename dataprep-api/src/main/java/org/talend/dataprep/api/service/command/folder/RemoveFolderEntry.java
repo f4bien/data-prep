@@ -25,7 +25,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
-import org.talend.dataprep.api.service.APIService;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -36,7 +35,7 @@ public class RemoveFolderEntry
     extends GenericCommand<Void> {
 
     public RemoveFolderEntry(String path, String contentType, String contentId) {
-        super(APIService.DATASET_GROUP);
+        super(GenericCommand.DATASET_GROUP);
         execute(() -> onExecute(path, contentId, contentType));
         onError(e -> new TDPException(UNABLE_TO_DELETE_FOLDER_ENTRY, e, ExceptionContext.build()));
         on(HttpStatus.OK).then(asNull());

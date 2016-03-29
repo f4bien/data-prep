@@ -29,8 +29,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.AppendStep;
 import org.talend.dataprep.api.preparation.StepDiff;
-import org.talend.dataprep.api.service.APIService;
 import org.talend.dataprep.api.service.command.common.PreparationCommand;
+import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 
@@ -39,7 +39,7 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 public class PreparationAddAction extends PreparationCommand<Void> {
 
     private PreparationAddAction(final String preparationId, final AppendStep step) {
-        super(APIService.PREPARATION_GROUP);
+        super(GenericCommand.PREPARATION_GROUP);
         execute(() -> onExecute(preparationId, step));
         on(HttpStatus.OK).then(asNull());
     }

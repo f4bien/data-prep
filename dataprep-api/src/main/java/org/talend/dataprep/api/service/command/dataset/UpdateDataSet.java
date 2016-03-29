@@ -24,7 +24,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.service.PreparationAPI;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
@@ -34,7 +33,7 @@ import org.talend.dataprep.exception.error.APIErrorCodes;
 public class UpdateDataSet extends GenericCommand<String> {
 
     private UpdateDataSet(String id, InputStream dataSetContent) {
-        super(PreparationAPI.DATASET_GROUP);
+        super(GenericCommand.DATASET_GROUP);
         execute(() -> {
             final HttpPut put = new HttpPut(datasetServiceUrl + "/datasets/" + id); //$NON-NLS-1$ //$NON-NLS-2$
             put.setHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE);

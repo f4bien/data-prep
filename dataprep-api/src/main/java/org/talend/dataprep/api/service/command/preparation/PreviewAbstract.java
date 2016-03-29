@@ -26,8 +26,8 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.springframework.http.HttpStatus;
 import org.talend.dataprep.api.preparation.Action;
-import org.talend.dataprep.api.service.APIService;
 import org.talend.dataprep.api.service.command.common.PreparationCommand;
+import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.TransformationErrorCodes;
 import org.talend.dataprep.transformation.preview.api.PreviewParameters;
@@ -46,7 +46,7 @@ public abstract class PreviewAbstract extends PreparationCommand<InputStream> {
      * Default constructor.
      */
     public PreviewAbstract() {
-        super(APIService.PREPARATION_GROUP);
+        super(GenericCommand.PREPARATION_GROUP);
     }
 
     @Override

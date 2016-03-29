@@ -26,7 +26,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.ExceptionContext;
-import org.talend.dataprep.api.service.APIService;
 import org.talend.dataprep.command.GenericCommand;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -36,7 +35,7 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 public class CreateChildFolder extends GenericCommand<InputStream> {
 
     public CreateChildFolder(String path) {
-        super(APIService.DATASET_GROUP);
+        super(GenericCommand.DATASET_GROUP);
         execute(() -> onExecute(path));
         onError(e -> new TDPException(UNABLE_TO_CREATE_FOLDER, e, ExceptionContext.build()));
         on(HttpStatus.OK).then(pipeStream());

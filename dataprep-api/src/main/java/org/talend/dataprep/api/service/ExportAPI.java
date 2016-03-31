@@ -40,6 +40,7 @@ import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.http.HttpRequestContext;
 import org.talend.dataprep.http.HttpResponseContext;
 import org.talend.dataprep.metrics.Timed;
+import org.talend.dataprep.security.PublicAPI;
 
 import com.netflix.hystrix.HystrixCommand;
 
@@ -88,6 +89,7 @@ public class ExportAPI extends APIService {
     @RequestMapping(value = "/api/export/formats", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get the available format types")
     @Timed
+    @PublicAPI
     public void exportTypes(final OutputStream output) {
         final HystrixCommand<InputStream> command = getCommand(ExportTypes.class);
         try (InputStream commandResult = command.execute()) {

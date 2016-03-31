@@ -59,6 +59,7 @@ import org.talend.dataprep.exception.json.JsonErrorCodeDescription;
 import org.talend.dataprep.format.export.ExportFormat;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.metrics.VolumeMetered;
+import org.talend.dataprep.security.PublicAPI;
 import org.talend.dataprep.transformation.aggregation.AggregationService;
 import org.talend.dataprep.transformation.aggregation.api.AggregationParameters;
 import org.talend.dataprep.transformation.aggregation.api.AggregationResult;
@@ -546,6 +547,7 @@ public class TransformationService extends BaseTransformationService {
     @RequestMapping(value = "/export/formats", method = GET)
     @ApiOperation(value = "Get the available format types")
     @Timed
+    @PublicAPI
     public List<ExportFormat> exportTypes() {
         return formatRegistrationService.getExternalFormats().stream() //
                 .sorted((f1, f2) -> f1.getOrder() - f2.getOrder()) // Enforce strict order.

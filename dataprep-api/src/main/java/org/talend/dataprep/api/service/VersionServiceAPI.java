@@ -31,6 +31,7 @@ import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.info.ManifestInfo;
 import org.talend.dataprep.info.Version;
 import org.talend.dataprep.metrics.Timed;
+import org.talend.dataprep.security.PublicAPI;
 
 import com.netflix.hystrix.HystrixCommand;
 import io.swagger.annotations.ApiOperation;
@@ -59,6 +60,7 @@ public class VersionServiceAPI extends APIService {
     @RequestMapping(value = "/api/version", method = GET)
     @ApiOperation(value = "Get the version of all services (including underlying low level services)", produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
+    @PublicAPI
     public Version[] allVersions() {
         Version[] versions = new Version[4];
         ManifestInfo manifestInfo = ManifestInfo.getInstance();

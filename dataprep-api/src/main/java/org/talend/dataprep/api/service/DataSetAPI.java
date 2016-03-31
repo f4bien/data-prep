@@ -43,6 +43,7 @@ import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.http.HttpResponseContext;
 import org.talend.dataprep.metrics.Timed;
+import org.talend.dataprep.security.PublicAPI;
 
 import com.netflix.hystrix.HystrixCommand;
 
@@ -466,6 +467,7 @@ public class DataSetAPI extends APIService {
     @RequestMapping(value = "/api/datasets/encodings", method = GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "List supported dataset encodings.", notes = "Returns the supported dataset encodings.")
     @Timed
+    @PublicAPI
     public void listEncodings(final OutputStream output) {
 
         // Get dataset metadata

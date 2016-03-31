@@ -55,6 +55,7 @@ public class Documentation {
     @Value("#{'${service.paths}'.split(',')}")
     private String[] servicePaths;
 
+
     /**
      * @return The swagger documentation.
      */

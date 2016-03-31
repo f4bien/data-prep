@@ -19,12 +19,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.context.WebApplicationContext;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.hystrix.HystrixCommand;
 import io.swagger.annotations.Api;
 
@@ -40,7 +40,7 @@ public class APIService {
     private PoolingHttpClientConnectionManager connectionManager;
 
     @Autowired
-    protected Jackson2ObjectMapperBuilder builder;
+    protected ObjectMapper mapper;
 
     protected <T extends HystrixCommand> T getCommand(Class<T> clazz, Object... args) {
         try {

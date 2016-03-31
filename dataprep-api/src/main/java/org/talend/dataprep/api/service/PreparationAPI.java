@@ -25,10 +25,7 @@ import javax.validation.Valid;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.client.HttpClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.bind.annotation.*;
 import org.talend.dataprep.api.preparation.AppendStep;
 import org.talend.dataprep.api.preparation.Preparation;
@@ -102,7 +99,7 @@ public class PreparationAPI extends APIService {
             if (StringUtils.isEmpty(preparationJson)) {
                 throw new TDPException(APIErrorCodes.UNABLE_TO_RETRIEVE_PREPARATION_CONTENT);
             }
-            final Preparation preparation = builder.build().readerFor(Preparation.class).readValue(preparationJson);
+            final Preparation preparation = mapper.readerFor(Preparation.class).readValue(preparationJson);
 
             // to list compatible datasets
             String dataSetId = preparation.getDataSetId();

@@ -16,15 +16,16 @@ package org.talend.dataprep.api.service;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.netflix.hystrix.exception.HystrixRuntimeException;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -45,7 +46,9 @@ import org.talend.dataprep.http.HttpResponseContext;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.security.PublicAPI;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -310,8 +313,7 @@ public class DataSetAPI extends APIService {
             LOG.debug("Listing compatible datasets (pool: {})...", getConnectionStats());
         }
         HttpResponseContext.header("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
-        HttpClient client = getClient();
-        HystrixCommand<InputStream> listCommand = getCommand(CompatibleDataSetList.class, client, id, sort, order);
+        HystrixCommand<InputStream> listCommand = getCommand(CompatibleDataSetList.class, id, sort, order);
         try (InputStream content = listCommand.execute()) {
             IOUtils.copyLarge(content, output);
             output.flush();
@@ -344,7 +346,6 @@ public class DataSetAPI extends APIService {
             LOG.debug("Listing compatible preparations (pool: {})...", getConnectionStats());
         }
         HttpResponseContext.header("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
-        HttpClient client = getClient();
         try {
             // get the list of compatible data sets
             final ByteArrayOutputStream temp = new ByteArrayOutputStream();
@@ -358,19 +359,18 @@ public class DataSetAPI extends APIService {
             compatibleDataSetIds.add(dataSetId);
 
             // get list of preparations
-            HystrixCommand<InputStream> listCommand = getCommand(PreparationList.class, client, PreparationList.Format.LONG, sort,
+            HystrixCommand<InputStream> listCommand = getCommand(PreparationList.class, PreparationList.Format.LONG, sort,
                     order);
             try {
                 String preparationsJson = IOUtils.toString(listCommand.execute());
-                final Collection<Preparation> preparationsList = builder.build()
-                        .readerFor(new TypeReference<Collection<Preparation>>() {
-                        }).readValue(preparationsJson);
+                final Collection<Preparation> preparationsList = mapper.readerFor(new TypeReference<Collection<Preparation>>() {
+                }).readValue(preparationsJson);
 
                 // filter and keep only data sets ids that are compatible
                 List<Preparation> preparations = preparationsList.stream()
                         .filter(p -> compatibleDataSetIds.contains(p.getDataSetId())).collect(Collectors.toList());
 
-                InputStream content = IOUtils.toInputStream(builder.build().writeValueAsString(preparations));
+                InputStream content = IOUtils.toInputStream(mapper.writeValueAsString(preparations));
                 IOUtils.copyLarge(content, output);
                 output.flush();
                 if (LOG.isDebugEnabled()) {
@@ -455,10 +455,10 @@ public class DataSetAPI extends APIService {
         final String json;
         try {
             json = new String(byteArray.toByteArray());
-            final T object = builder.build().readerFor(type).readValue(json);
+            final T object = mapper.readerFor(type).readValue(json);
             return object;
         } catch (IOException e) {
-            throw new TDPException(CommonErrorCodes.UNABLE_TO_PARSE_JSON);
+            throw new TDPException(CommonErrorCodes.UNABLE_TO_PARSE_JSON, e);
         } finally {
             IOUtils.closeQuietly(byteArray);
         }

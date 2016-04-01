@@ -39,6 +39,25 @@ describe('Route state service', () => {
             expect(routeState.previousOptions).toBe(previousOptions);
         }));
 
+        it('should NOT change previous route if it is falsy', inject((routeState, RouteStateService) => {
+            //given
+            const previous = '';
+            const previousOptions = {opt: 'my options'};
+
+            const originalPrevious = 'toto';
+            const originalPreviousOptions = {};
+
+            routeState.previous = originalPrevious;
+            routeState.previousOptions = originalPreviousOptions;
+
+            //when
+            RouteStateService.setPrevious(previous, previousOptions);
+
+            //then
+            expect(routeState.previous).toBe(originalPrevious);
+            expect(routeState.previousOptions).toBe(originalPreviousOptions);
+        }));
+
         it('should reset previous route', inject((routeState, RouteStateService) => {
             //given
             const previous = 'previous.route';
@@ -77,6 +96,25 @@ describe('Route state service', () => {
             //then
             expect(routeState.next).toBe(previous);
             expect(routeState.nextOptions).toBe(previousOptions);
+        }));
+
+        it('should NOT change next route when it is falsy', inject((routeState, RouteStateService) => {
+            //given
+            const previous = '';
+            const previousOptions = {};
+
+            const originalPrevious = 'previous.route';
+            const originalPreviousOptions = {opt: 'my options'};
+
+            routeState.next = originalPrevious;
+            routeState.nextOptions = originalPreviousOptions;
+
+            //when
+            RouteStateService.setNext(previous, previousOptions);
+
+            //then
+            expect(routeState.next).toBe(originalPrevious);
+            expect(routeState.nextOptions).toBe(originalPreviousOptions);
         }));
 
         it('should reset next route', inject((routeState, RouteStateService) => {

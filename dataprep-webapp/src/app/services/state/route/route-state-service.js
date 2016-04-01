@@ -20,11 +20,17 @@ export const routeState = {
 
 export class RouteStateService {
     setPrevious(route, routeOptions) {
+        if(!route) {
+            return;
+        }
         routeState.previous = route;
         routeState.previousOptions = routeOptions;
     }
 
     setNext(route, routeOptions) {
+        if(!route) {
+            return;
+        }
         routeState.next = route;
         routeState.nextOptions = routeOptions;
     }

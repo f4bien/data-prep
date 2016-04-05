@@ -16,10 +16,12 @@ import inventoryTile from './inventory-tile-component';
 
     /**
      * @ngdoc object
-     * @name data-prep.preparation-tile
-     * @description This module contains the preparation tile
+     * @name data-prep.inventory-tile
+     * @description This module contains the inventory tile used for preparation display
      */
 
-    angular.module('data-prep.preparation-tile', [])
+    angular.module('data-prep.inventory-tile', [
+            'data-prep.services.utils'
+        ])
         .component('inventoryTile', inventoryTile);
 })();

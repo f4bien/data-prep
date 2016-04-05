@@ -1422,5 +1422,119 @@ describe('Playground Service', function () {
                 expect(OnboardingService.startTour).not.toHaveBeenCalled();
             }));
         })
-    })
+    });
+
+    describe('apply preparation to dataset', () => {
+
+        let cloneId = 'clonepreparationid';
+        let updateId = 'cupdatepreparationid';
+
+        let datasetId = 'dsid';
+        let name = 'myDsName';
+        describe('success', () => {
+            beforeEach(inject(($q, $rootScope, $state, PreparationService, PreparationListService) => {
+                spyOn(PreparationService, 'clone').and.returnValue($q.when(cloneId));
+                spyOn(PreparationService, 'update').and.returnValue($q.when(updateId));
+                spyOn(PreparationService, 'delete').and.returnValue($q.when(true));
+                spyOn(PreparationListService, 'refreshPreparations').and.returnValue($q.when(true));
+                spyOn($rootScope, '$emit').and.returnValue();
+            }));
+
+            describe('apply a preparation on a dataset', () => {
+
+                let selectedPreparation;
+                let datasetId = 'dsid';
+                let name = 'myDsName';
+
+                it('should clone the preparation', inject(($rootScope, $q, PlaygroundService, PreparationService) => {
+                    //when
+                    PlaygroundService.applyPreparationToDataset('selectedPrepId', 'datasetId', 'newPrepName');
+                    expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.start');
+                    $rootScope.$digest();
+
+                    //then
+                    expect(PreparationService.clone).toHaveBeenCalledWith('selectedPrepId');
+                }));
+
+                it('should update the clone preparation with the new name', inject(($rootScope, PlaygroundService, PreparationService) => {
+                    //when
+                    PlaygroundService.applyPreparationToDataset('selectedPrepId', 'datasetId', 'newPrepName');
+                    $rootScope.$digest();
+
+                    //then
+                    expect(PreparationService.update).toHaveBeenCalledWith(cloneId, {
+                        dataSetId: 'datasetId',
+                        name: 'newPrepName'
+                    });
+                }));
+
+                it('should refresh the preparations list', inject(($rootScope, PlaygroundService, PreparationService, PreparationListService) => {
+                    //when
+                    PlaygroundService.applyPreparationToDataset('selectedPrepId', 'datasetId', 'newPrepName');
+                    $rootScope.$digest();
+
+                    //then
+                    expect(PreparationListService.refreshPreparations).toHaveBeenCalled();
+                }));
+
+                it('should delete existing preparation', inject(($rootScope, $state, PlaygroundService, PreparationService) => {
+                    //when
+                    stateMock.playground.preparation = {};
+                    PlaygroundService.applyPreparationToDataset('selectedPrepId', 'datasetId', 'newPrepName');
+                    $rootScope.$digest();
+
+                    //then
+                    expect(PreparationService.delete).toHaveBeenCalledWith('selectedPrepId');
+                }));
+
+                it('should hide loading spinner', inject(($rootScope, $state, PlaygroundService) => {
+                    //when
+                    PlaygroundService.applyPreparationToDataset('selectedPrepId', 'datasetId', 'newPrepName');
+                    $rootScope.$digest();
+
+                    //then
+                    expect($rootScope.$emit).toHaveBeenCalledWith('talend.loading.stop');
+                }));
+            });
+        });
+
+        describe('failure to apply a preparation to a dataset', () => {
+            beforeEach(inject(($q, $rootScope, $state, PreparationService, PreparationListService) => {
+                spyOn(PreparationService, 'delete').and.returnValue($q.when(true));
+                spyOn($rootScope, '$emit').and.returnValue();
+            }));
+
+            describe('error on cloning', () => {
+                it('should delete the clone preparation', inject(($rootScope, $q, PlaygroundService, PreparationService) => {
+                    //given
+                    spyOn(PreparationService, 'clone').and.returnValue($q.when(cloneId));
+                    spyOn(PreparationService, 'update').and.returnValue($q.reject());
+
+                    //when
+                    PlaygroundService.applyPreparationToDataset('selectedPrepId', 'datasetId', 'newPrepName');
+                    $rootScope.$digest();
+
+                    //then
+                    expect(PreparationService.delete).toHaveBeenCalledWith(cloneId);
+                }));
+            });
+
+            describe('error on update', () => {
+                it('should delete the clone preparation', inject(($rootScope, $q, PlaygroundService, PreparationListService, PreparationService) => {
+                    //given
+                    spyOn(PreparationService, 'clone').and.returnValue($q.when(cloneId));
+                    spyOn(PreparationService, 'update').and.returnValue($q.when(updateId));
+                    spyOn(PreparationListService, 'refreshPreparations').and.returnValue($q.reject());
+
+                    //when
+                    PlaygroundService.applyPreparationToDataset('selectedPrepId', 'datasetId', 'newPrepName');
+                    $rootScope.$digest();
+
+                    //then
+                    expect(PreparationService.delete).toHaveBeenCalledWith(updateId);
+                }));
+            });
+        });
+
+    });
 });

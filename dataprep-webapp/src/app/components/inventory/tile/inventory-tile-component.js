@@ -17,13 +17,16 @@ const inventoryTile = {
         dataset: '<',
         editableTitle: '<',
         onClone: '&',
-        onFavortite: '&',
+        onFavorite: '&',
         onRemove: '&',
         onRename: '&',
         onTileClick: '&',
         onTitleClick: '&',
-        preparation: '<'
+        preparation: '<',
+        showCloneIcon: '=',
+        showFavoriteIcon: '=',
+        showRemoveIcon: '='
     },
-    templateUrl: 'app/components/inventory/inventory-tile/inventory-tile.html'
+    templateUrl: 'app/components/inventory/tile/inventory-tile.html'
 };
 export default inventoryTile

@@ -23,7 +23,7 @@ import PreparationList from './preparation-list-directive';
      * @description This module contains the controller and directives to manage the preparation list
      * @requires ui.router
      * @requires talend.widget
-     * @requires data-prep.preparation-tile
+     * @requires data-prep.inventory-tile
      * @requires data-prep.services.preparation
      * @requires data-prep.services.playground
      * @requires data-prep.services.state
@@ -32,7 +32,7 @@ import PreparationList from './preparation-list-directive';
         [
             'ui.router',
             'talend.widget',
-            'data-prep.preparation-tile',
+            'data-prep.inventory-tile',
             'data-prep.services.preparation',
             'data-prep.services.playground',
             'data-prep.services.state'

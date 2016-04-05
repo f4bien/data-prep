@@ -24,17 +24,27 @@
         </div>
 
         <div ng-if="!$ctrl.editableTitle">
-            <span class="title one-line" title="{{$ctrl.preparation.name}}">{{$ctrl.preparation.name}}</span>
+            <span
+                    class="title one-line"
+                    title="{{$ctrl.preparation.name}}"
+                    ng-click="$ctrl.onTitleClick({preparation: $ctrl.preparation})"
+            >{{$ctrl.preparation.name}}</span>
         </div>
 
 
         <p class="description">
-            <span translate-once="OWNED_BY"></span> <span class="important" title="{{$ctrl.preparation.author}}" >{{$ctrl.preparation.author}}</span><br/>
-            <span translate-once="LAST_MODIFICATION"></span><span translate-once="COLON"></span>{{$ctrl.preparation.lastModificationDate | TDPMoment}}
+            <span translate-once="OWNED_BY"></span>
+            <span class="important" title="{{$ctrl.preparation.author}}" >{{$ctrl.preparation.author}}</span>
+            <br/>
+            <span translate-once="LAST_MODIFICATION"></span>
+            <span translate-once="COLON"></span>
+            {{$ctrl.preparation.lastModificationDate | TDPMoment}}
         </p>
 
         <p class="details">
-            <span class="important name one-line" title="{{$ctrl.dataset.name}}">{{$ctrl.dataset.name}}</span>&nbsp;- {{ $ctrl.dataset.records}} <span translate-once="ROWS"></span>
+            <span class="important name one-line" title="{{$ctrl.dataset.name}}">{{$ctrl.dataset.name}}</span>
+            &nbsp;- {{ $ctrl.dataset.records}}
+            <span translate-once="ROWS"></span>
         </p>
         <p class="details">
             <span class="important">{{$ctrl.preparation.steps.length - 1}}</span> <span class="important" translate-once="STEPS"></span> <span translate-once="RECIPE"></span>
@@ -42,8 +52,8 @@
     </div>
 
     <div class="actions">
-        <a ng-if="$ctrl.onFavortite" class="favorite" data-icon="f" ng-class="{selected: $ctrl.preparation.favorite}" ng-click="$ctrl.preparation.favorite = !$ctrl.preparation.favorite"></a>
-        <a ng-if="$ctrl.onClone" class="clone-btn" data-icon="B" ng-click="$ctrl.onClone({preparation: $ctrl.preparation})" id="clone_btn_{{$ctrl.preparation.id}}"></a>
-        <a ng-if="$ctrl.onRemove" class="trash" data-icon="e" ng-click="$ctrl.onRemove({preparation: $ctrl.preparation})"></a>
+        <a ng-if="$ctrl.showFavoriteIcon" class="favorite" data-icon="f" ng-class="{selected: $ctrl.preparation.favorite}" ng-click="$ctrl.preparation.favorite = !$ctrl.preparation.favorite"></a>
+        <a ng-if="$ctrl.showCloneIcon" class="clone-btn" data-icon="B" ng-click="$ctrl.onClone({preparation: $ctrl.preparation})" id="clone_btn_{{$ctrl.preparation.id}}"></a>
+        <a ng-if="$ctrl.showRemoveIcon" class="trash" data-icon="e" ng-click="$ctrl.onRemove({preparation: $ctrl.preparation})"></a>
     </div>
 </div>

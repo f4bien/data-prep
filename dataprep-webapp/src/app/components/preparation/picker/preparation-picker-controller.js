@@ -12,27 +12,23 @@
  ============================================================================*/
 
 class PreparationPickerCtrl {
-    constructor($rootScope, $timeout, $state, DatasetService, StateService, state, PreparationService, PreparationListService, RecipeService) {
+    constructor($rootScope, $state, state, DatasetService, PlaygroundService, PreparationService, RecipeService) {
         'ngInject';
 
         this.$rootScope = $rootScope;
-        this.$timeout = $timeout;
         this.$state = $state;
         this.datasetService = DatasetService;
-        this.stateService = StateService;
 
         this.state = state;
-        this.datasetName = this.state.playground.preparation ?
+        this.newPreparationName = this.state.playground.preparation ?
             this.state.playground.preparation.name :
             this.state.playground.dataset.name;
         this.datasetId = this.state.playground.dataset.id;
 
         this.preparationService = PreparationService;
-        this.preparationListService = PreparationListService;
-        this.isFetchingPreparations = true;
         this.recipeService = RecipeService;
-
         this.candidatePreparations = [];
+        this.playgroundService = PlaygroundService;
     }
 
     /**
@@ -42,21 +38,10 @@ class PreparationPickerCtrl {
      * @description initializes preparation picker form
      **/
     $onInit() {
+        this.isFetchingPreparations = true;
         this.datasetService.getCompatiblePreparations(this.datasetId)
             .then((compatiblePreparations) => {
-                if (compatiblePreparations.length) {
-                    if (this.state.playground.preparation) {
-                        compatiblePreparations = _.reject(compatiblePreparations, {id: this.state.playground.preparation.id});
-                    }
-
-                    const wrappedCandidatePreparations = _.map(compatiblePreparations, (candidatePrepa) => {
-                        return {
-                            preparation: candidatePrepa,
-                            dataset: _.find(this.state.inventory.datasets, {id: candidatePrepa.dataSetId})
-                        };
-                    });
-                    this.candidatePreparations = wrappedCandidatePreparations;
-                }
+                this.candidatePreparations = compatiblePreparations;
             })
             .finally(() => {
                 this.isFetchingPreparations = false;
@@ -67,46 +52,18 @@ class PreparationPickerCtrl {
      * @ngdoc method
      * @name selectPreparation
      * @methodOf data-prep.preparation-picker.controller:PreparationPickerCtrl
+     * @param {Object} selectedPrepa selected preparation
      * @description selects the preparation to apply
      **/
     selectPreparation(selectedPrepa) {
         this.selectedPreparation = selectedPrepa;
-        this.$rootScope.$emit('talend.loading.start');
-        if (this.state.playground.preparation) {
-            this.preparationService.delete(this.state.playground.preparation)
-                .then(() => {this._applyPreparation();});
-        }
-        else {
-            this._applyPreparation();
-        }
-    }
-
-    /**
-     * @ngdoc method
-     * @name _applyPreparation
-     * @methodOf data-prep.preparation-picker.controller:PreparationPickerCtrl
-     * @description applies the selected preparation to the dataset
-     **/
-    _applyPreparation() {
-        this.preparationService.clone(this.selectedPreparation.id)
-            .then((preparationCloneId) => this.preparationService.update(preparationCloneId, {
-                dataSetId: this.datasetId,
-                name: this.datasetName
-            }))
-            .then((updatedPreparationId) => {
-                return this.preparationListService.refreshPreparations()
-                    .then(() => updatedPreparationId);
-            })
+        this.playgroundService.applyPreparationToDataset(this.selectedPreparation.id, this.datasetId, this.newPreparationName)
             .then((updatedPreparationId) => {
                 this.closePicker();
-                //this.stateService.updatePreparationPickerDisplay(false);
-                //this.stateService.resetPlayground();//in order to remove the chart container ng-if="...vertical"
                 this.$state.go('playground.preparation', {prepid: updatedPreparationId}, {reload: true});
-            })
-            .finally(() => {
-                this.$rootScope.$emit('talend.loading.stop');
             });
     }
+
 }
 
 export default PreparationPickerCtrl

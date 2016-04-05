@@ -21,11 +21,14 @@
             dataset="preparation.dataset"
             editable-title="true"
             on-clone="preparationListCtrl.clone(preparation)"
-            on-favortite="angular.noop"
+            on-favorite="angular.noop"
             on-remove="preparationListCtrl.remove(preparation)"
             on-rename="preparationListCtrl.rename(preparation, text)"
             on-tile-click="angular.noop"
             on-title-click="preparationListCtrl.load(preparation)"
             preparation="preparation"
+            show-clone-icon="true"
+            show-favorite-icon="true"
+            show-remove-icon="true"
     ></inventory-tile>
 </div>

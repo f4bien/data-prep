@@ -21,7 +21,7 @@
 
     <span ng-if="!$ctrl.candidatePreparations.length"
           translate-once="NO_COMPATIBLE_PREPARATIONS"
-          translate-values="{name: $ctrl.datasetName}"
+          translate-values="{name: $ctrl.state.playground.dataset.name}"
     ></span>
 
     <div class="preparation-list">
@@ -31,9 +31,12 @@
 
                 dataset="candidate.dataset"
                 editable-title="false"
-                on-favortite="angular.noop"
+                on-favorite="angular.noop"
                 on-tile-click="$ctrl.selectPreparation(preparation)"
                 preparation="candidate.preparation"
+                show-clone-icon="false"
+                show-favorite-icon="true"
+                show-remove-icon="false"
         ></inventory-tile>
     </div>
 </div>

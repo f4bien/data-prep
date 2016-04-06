@@ -11,7 +11,7 @@
 //
 // ============================================================================
 
-package org.talend.dataprep.api.service.command.preparation;
+package org.talend.dataprep.command.preparation;
 
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 import static org.talend.dataprep.command.Defaults.pipeStream;

@@ -41,6 +41,7 @@ import org.talend.dataprep.api.service.api.PreviewUpdateParameters;
 import org.talend.dataprep.api.service.command.dataset.CompatibleDataSetList;
 import org.talend.dataprep.api.service.command.preparation.*;
 import org.talend.dataprep.command.preparation.PreparationDetailsGet;
+import org.talend.dataprep.command.preparation.PreparationGetActions;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;

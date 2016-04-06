@@ -33,6 +33,7 @@ import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.service.command.common.ChainedCommand;
 import org.talend.dataprep.command.GenericCommand;
+import org.talend.dataprep.command.preparation.PreparationGetActions;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.transformation.preview.api.PreviewParameters;

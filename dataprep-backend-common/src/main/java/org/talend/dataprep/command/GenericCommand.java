@@ -16,6 +16,7 @@ package org.talend.dataprep.command;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -36,10 +37,12 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.talend.daikon.exception.json.JsonErrorCode;
+import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.security.Security;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.hystrix.HystrixCommand;
@@ -267,5 +270,15 @@ public class GenericCommand<T> extends HystrixCommand<T> {
                 GenericCommand.this.behavior.put(currentStatus, action);
             }
         }
+    }
+
+    /**
+     * Serialize the actions to string.
+     *
+     * @param stepActions - map of couple (stepId, action)
+     * @return the serialized actions
+     */
+    protected String serializeActions(final Collection<Action> stepActions) throws JsonProcessingException {
+        return "{\"actions\": " + objectMapper.writeValueAsString(stepActions) + "}";
     }
 }

@@ -1,24 +1,29 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.api.service;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.talend.daikon.exception.ExceptionContext.withBuilder;
+import static org.talend.dataprep.exception.error.PreparationErrorCodes.UNABLE_TO_READ_PREPARATION;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -27,19 +32,22 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.talend.dataprep.api.preparation.Action;
 import org.talend.dataprep.api.preparation.AppendStep;
 import org.talend.dataprep.api.preparation.Preparation;
-import org.talend.dataprep.api.service.api.PreviewAddInput;
-import org.talend.dataprep.api.service.api.PreviewDiffInput;
-import org.talend.dataprep.api.service.api.PreviewUpdateInput;
+import org.talend.dataprep.api.service.api.PreviewAddParameters;
+import org.talend.dataprep.api.service.api.PreviewDiffParameters;
+import org.talend.dataprep.api.service.api.PreviewUpdateParameters;
 import org.talend.dataprep.api.service.command.dataset.CompatibleDataSetList;
 import org.talend.dataprep.api.service.command.preparation.*;
+import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
 import org.talend.dataprep.http.HttpResponseContext;
 import org.talend.dataprep.metrics.Timed;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.netflix.hystrix.HystrixCommand;
 
 import io.swagger.annotations.ApiOperation;
@@ -59,7 +67,7 @@ public class PreparationAPI extends APIService {
         }
         PreparationList.Format listFormat = PreparationList.Format.valueOf(format.toUpperCase());
         HystrixCommand<InputStream> command = getCommand(PreparationList.class, listFormat);
-        try (InputStream commandResult = command.execute()){
+        try (InputStream commandResult = command.execute()) {
             HttpResponseContext.header("Content-Type", APPLICATION_JSON_VALUE); //$NON-NLS-1$
             IOUtils.copyLarge(commandResult, output);
             output.flush();
@@ -83,7 +91,8 @@ public class PreparationAPI extends APIService {
     @RequestMapping(value = "/api/preparations/{id}/basedatasets", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get all data sets that are compatible with a preparation.", notes = "Returns the list of data sets the current user is allowed to see and that are compatible with the preparation.")
     @Timed
-    public void listCompatibleDatasets(@PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") String preparationId,
+    public void listCompatibleDatasets(
+            @PathVariable(value = "id") @ApiParam(name = "id", value = "Preparation id.") String preparationId,
             @ApiParam(value = "Sort key (by name or date), defaults to 'date'.") @RequestParam(defaultValue = "DATE", required = false) String sort,
             @ApiParam(value = "Order for sort key (desc or asc), defaults to 'desc'.") @RequestParam(defaultValue = "DESC", required = false) String order,
             final OutputStream output) {
@@ -190,7 +199,7 @@ public class PreparationAPI extends APIService {
             LOG.debug("Retrieving preparation details (pool: {} )...", getConnectionStats());
         }
 
-        HystrixCommand<InputStream> command = getCommand(PreparationGet.class, preparationId);
+        HystrixCommand<InputStream> command = getCommand(PreparationDetailsGet.class, preparationId);
         try (InputStream commandResult = command.execute()) {
             // You cannot use Preparation object mapper here: to serialize steps & actions, you'd need a version
             // repository not available at API level. Code below copies command result direct to response.
@@ -221,8 +230,9 @@ public class PreparationAPI extends APIService {
         } catch (NumberFormatException e) {
             sampleValue = null;
         }
-        HystrixCommand<InputStream> command = getCommand(PreparationGetContent.class, preparationId, version,
-                sampleValue);
+
+        final PreparationDetailsGet preparationDetailsGet = getCommand(PreparationDetailsGet.class, preparationId);
+        HystrixCommand<InputStream> command = getCommand(PreparationGetContent.class, preparationId, version, sampleValue, preparationDetailsGet);
         try (InputStream preparationContent = command.execute()) {
             IOUtils.copyLarge(preparationContent, output);
             output.flush();
@@ -234,45 +244,67 @@ public class PreparationAPI extends APIService {
         }
     }
 
+    //@formatter:off
     @RequestMapping(value = "/api/preparations/{id}/actions", method = POST, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Adds an action at the end of preparation.", notes = "Does not return any value, client may expect successful operation based on HTTP status code.")
     @Timed
-    public void addPreparationAction(@PathVariable(value = "id")
-    @ApiParam(name = "id", value = "Preparation id.")
-    final String preparationId, @RequestBody
-    @ApiParam("Action to add at end of the preparation.")
-    final AppendStep step) {
+    public void addPreparationAction(@ApiParam(name = "id", value = "Preparation id.") @PathVariable(value = "id")  final String preparationId,
+                                     @ApiParam("Action to add at end of the preparation.") @RequestBody final AppendStep step) {
+    //@formatter:on
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Adding action to preparation (pool: {} )...", getConnectionStats());
         }
 
-        final HystrixCommand<Void> command = getCommand(PreparationAddAction.class, preparationId, step);
+        // get the preparation
+        Preparation preparation = internalGetPreparation(preparationId);
+
+        // get the preparation actions
+        final PreparationGetActions getActionsCommand = getCommand(PreparationGetActions.class, preparationId);
+
+        // get the diff
+        final DiffMetadata diffCommand = getCommand(DiffMetadata.class, preparation.getDataSetId(), preparationId,
+                step.getActions(), getActionsCommand);
+
+        // add the action
+        final HystrixCommand<Void> command = getCommand(PreparationAddAction.class, preparationId, step, diffCommand);
         command.execute();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Added action to preparation (pool: {} )...", getConnectionStats());
         }
     }
 
+    //@formatter:off
     @RequestMapping(value = "/api/preparations/{preparationId}/actions/{stepId}", method = PUT, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Updates an action in the preparation.", notes = "Does not return any value, client may expect successful operation based on HTTP status code.")
     @Timed
-    public void updatePreparationAction(@PathVariable(value = "preparationId")
-    @ApiParam(name = "preparationId", value = "Preparation id.")
-    final String preparationId, @PathVariable(value = "stepId")
-    @ApiParam(name = "stepId", value = "Step id in the preparation.")
-    final String stepId, @RequestBody
-    @ApiParam("New content for the action.")
-    final AppendStep step) {
+    public void updatePreparationAction(@ApiParam(name = "preparationId", value = "Preparation id.") @PathVariable(value = "preparationId") final String preparationId,
+                                        @ApiParam(name = "stepId", value = "Step id in the preparation.") @PathVariable(value = "stepId") final String stepId,
+                                        @ApiParam("New content for the action.") @RequestBody final AppendStep step) {
+    //@formatter:on
+
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Updating preparation action at step #{} (pool: {} )...", stepId, //
-                    getConnectionStats());
+            LOG.debug("Updating preparation action at step #{} (pool: {} )...", stepId, getConnectionStats());
         }
 
-        final HystrixCommand<Void> command = getCommand(PreparationUpdateAction.class, preparationId, stepId, step);
+        // get the preparation
+        Preparation preparation = internalGetPreparation(preparationId);
+
+        // get the preparation actions for up to the updated action
+        final int stepIndex = preparation.getSteps().indexOf(stepId);
+        final String parentStepId = preparation.getSteps().get(stepIndex - 1);
+        final PreparationGetActions getActionsCommand = getCommand(PreparationGetActions.class, preparationId, parentStepId);
+
+        // get the diff
+        final DiffMetadata diffCommand = getCommand(DiffMetadata.class, preparation.getDataSetId(), preparationId,
+                step.getActions(), getActionsCommand);
+
+        // get the update action command and execute it
+        final HystrixCommand<Void> command = getCommand(PreparationUpdateAction.class, preparationId, stepId, step, diffCommand);
         command.execute();
+
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Updated preparation action at step #{} (pool: {} )...", stepId, //
-                    getConnectionStats());
+            LOG.debug("Updated preparation action at step #{} (pool: {} )...", stepId, getConnectionStats());
         }
     }
 
@@ -323,13 +355,20 @@ public class PreparationAPI extends APIService {
     // ----------------------------------------PREVIEW----------------------------------
     // ---------------------------------------------------------------------------------
 
+    //@formatter:off
     @RequestMapping(value = "/api/preparations/preview/diff", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get a preview diff between 2 steps of the same preparation.")
     @Timed
-    public void previewDiff(@RequestBody
-    final PreviewDiffInput input, final OutputStream output) {
-        final HystrixCommand<InputStream> transformation = getCommand(PreviewDiff.class, input);
-        try (InputStream commandResult = transformation.execute()){
+    public void previewDiff(@RequestBody final PreviewDiffParameters input, final OutputStream output) {
+    //@formatter:on
+
+        // get preparation details
+        final Preparation preparation = internalGetPreparation(input.getPreparationId());
+        final List<Action> lastActiveStepActions = internalGetActions(preparation.getId(), input.getCurrentStepId());
+        final List<Action> previewStepActions = internalGetActions(preparation.getId(), input.getPreviewStepId());
+
+        final HystrixCommand<InputStream> transformation = getCommand(PreviewDiff.class, input, preparation, lastActiveStepActions, previewStepActions);
+        try (InputStream commandResult = transformation.execute()) {
             IOUtils.copyLarge(commandResult, output);
             output.flush();
         } catch (Exception e) {
@@ -337,12 +376,18 @@ public class PreparationAPI extends APIService {
         }
     }
 
+    //@formatter:off
     @RequestMapping(value = "/api/preparations/preview/update", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get a preview diff between the same step of the same preparation but with one step update.")
-    public void previewUpdate(@RequestBody
-    final PreviewUpdateInput input, final OutputStream output) {
-        final HystrixCommand<InputStream> transformation = getCommand(PreviewUpdate.class, input);
-        try (InputStream commandResult = transformation.execute()){
+    public void previewUpdate(@RequestBody final PreviewUpdateParameters input, final OutputStream output) {
+    //@formatter:on
+
+        // get preparation details
+        final Preparation preparation = internalGetPreparation(input.getPreparationId());
+        final List<Action> actions = internalGetActions(preparation.getId());
+
+        final HystrixCommand<InputStream> transformation = getCommand(PreviewUpdate.class, input, preparation, actions);
+        try (InputStream commandResult = transformation.execute()) {
             IOUtils.copyLarge(commandResult, output);
             output.flush();
         } catch (Exception e) {
@@ -350,17 +395,74 @@ public class PreparationAPI extends APIService {
         }
     }
 
+    //@formatter:off
     @RequestMapping(value = "/api/preparations/preview/add", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get a preview between the head step and a new appended transformation")
-    public void previewAdd(@RequestBody
-    @Valid
-    final PreviewAddInput input, final OutputStream output) {
-        final HystrixCommand<InputStream> transformation = getCommand(PreviewAdd.class, input);
-        try (InputStream commandResult = transformation.execute()){
+    public void previewAdd(@RequestBody @Valid final PreviewAddParameters input, final OutputStream output) {
+    //@formatter:on
+
+        Preparation preparation = null;
+        List<Action> actions = new ArrayList<>(0);
+
+        // get preparation details with dealing with preparations
+        if (StringUtils.isNotBlank(input.getPreparationId())) {
+            preparation = internalGetPreparation(input.getPreparationId());
+            actions = internalGetActions(preparation.getId());
+        }
+
+        final HystrixCommand<InputStream> transformation = getCommand(PreviewAdd.class, input, preparation, actions);
+
+        try (InputStream commandResult = transformation.execute()) {
             IOUtils.copyLarge(commandResult, output);
             output.flush();
         } catch (Exception e) {
             throw new TDPException(APIErrorCodes.UNABLE_TO_TRANSFORM_DATASET, e);
         }
+
     }
+
+    /**
+     * Helper method used to retrieve preparation actions via a hystrix command.
+     *
+     * @param preparationId the preparation id to get the actions from.
+     * @return the preparation actions.
+     */
+    private List<Action> internalGetActions(String preparationId) {
+        return internalGetActions(preparationId, "head");
+    }
+
+    /**
+     * Helper method used to retrieve preparation actions via a hystrix command.
+     *
+     * @param preparationId the preparation id to get the actions from.
+     * @param stepId the preparation version.
+     * @return the preparation actions.
+     */
+    private List<Action> internalGetActions(String preparationId, String stepId) {
+        final PreparationGetActions getActionsCommand = getCommand(PreparationGetActions.class, preparationId, stepId);
+        try {
+            return mapper.readerFor(new TypeReference<List<Action>>() {
+            }).readValue(getActionsCommand.execute());
+        } catch (IOException e) {
+            throw new TDPException(APIErrorCodes.UNABLE_TO_GET_PREPARATION_DETAILS, e);
+        }
+    }
+
+
+    /**
+     * Helper method used to get a preparation for internal class use.
+     *
+     * @param preparationId the preparation id.
+     * @return the preparation.
+     */
+    private Preparation internalGetPreparation(String preparationId) {
+        ByteArrayOutputStream temp = new ByteArrayOutputStream();
+        getPreparation(preparationId, temp);
+        try {
+            return mapper.readerFor(Preparation.class).readValue(new ByteArrayInputStream(temp.toByteArray()));
+        } catch (IOException e) {
+            throw new TDPException(UNABLE_TO_READ_PREPARATION, e, withBuilder().put("id", preparationId).build());
+        }
+    }
+
 }

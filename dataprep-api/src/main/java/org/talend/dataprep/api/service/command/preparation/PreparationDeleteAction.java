@@ -19,12 +19,11 @@ import org.apache.http.client.methods.HttpDelete;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.talend.dataprep.api.service.command.common.PreparationCommand;
 import org.talend.dataprep.command.GenericCommand;
 
 @Component
 @Scope("request")
-public class PreparationDeleteAction extends PreparationCommand<Void> {
+public class PreparationDeleteAction extends GenericCommand<Void> {
 
     private PreparationDeleteAction(final String preparationId, final String stepId) {
         super(GenericCommand.PREPARATION_GROUP);

@@ -35,6 +35,7 @@ import org.talend.dataprep.api.service.command.transformation.LineActions;
 import org.talend.dataprep.api.service.command.transformation.SuggestActionParams;
 import org.talend.dataprep.api.service.command.transformation.SuggestColumnActions;
 import org.talend.dataprep.command.dataset.DataSetGet;
+import org.talend.dataprep.command.preparation.PreparationDetailsGet;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.APIErrorCodes;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
@@ -136,8 +137,10 @@ public class TransformAPI extends APIService {
         try {
             // get preparation/dataset content
             HystrixCommand<InputStream> inputData;
-            if (isNotBlank(dynamicParamsInput.getPreparationId())) {
-                inputData = getCommand(PreparationGetContent.class, dynamicParamsInput.getPreparationId(), dynamicParamsInput.getStepId());
+            final String preparationId = dynamicParamsInput.getPreparationId();
+            if (isNotBlank(preparationId)) {
+                final PreparationDetailsGet preparationDetailsGet = getCommand(PreparationDetailsGet.class, preparationId);
+                inputData = getCommand(PreparationGetContent.class, preparationId, dynamicParamsInput.getStepId(), preparationDetailsGet);
             } else {
                 inputData = getCommand(DataSetGet.class, dynamicParamsInput.getDatasetId(), true, null);
             }

@@ -84,51 +84,77 @@ describe('Route state service', () => {
 
         it('should set next route', inject((routeState, RouteStateService) => {
             //given
-            const previous = 'previous.route';
-            const previousOptions = {opt: 'my options'};
+            const next = 'previous.route';
+            const nextOptions = {opt: 'my options'};
 
-            expect(routeState.next).not.toBe(previous);
-            expect(routeState.nextOptions).not.toBe(previousOptions);
+            expect(routeState.next).not.toBe(next);
+            expect(routeState.nextOptions).not.toBe(nextOptions);
 
             //when
-            RouteStateService.setNext(previous, previousOptions);
+            RouteStateService.setNext(next, nextOptions);
 
             //then
-            expect(routeState.next).toBe(previous);
-            expect(routeState.nextOptions).toBe(previousOptions);
+            expect(routeState.next).toBe(next);
+            expect(routeState.nextOptions).toBe(nextOptions);
         }));
 
         it('should NOT change next route when it is falsy', inject((routeState, RouteStateService) => {
             //given
-            const previous = '';
-            const previousOptions = {};
+            const next = '';
+            const nextOptions = {};
 
-            const originalPrevious = 'previous.route';
-            const originalPreviousOptions = {opt: 'my options'};
+            const originalNext = 'previous.route';
+            const originalNextOptions = {opt: 'my options'};
 
-            routeState.next = originalPrevious;
-            routeState.nextOptions = originalPreviousOptions;
+            routeState.next = originalNext;
+            routeState.nextOptions = originalNextOptions;
 
             //when
-            RouteStateService.setNext(previous, previousOptions);
+            RouteStateService.setNext(next, nextOptions);
 
             //then
-            expect(routeState.next).toBe(originalPrevious);
-            expect(routeState.nextOptions).toBe(originalPreviousOptions);
+            expect(routeState.next).toBe(originalNext);
+            expect(routeState.nextOptions).toBe(originalNextOptions);
         }));
 
         it('should reset next route', inject((routeState, RouteStateService) => {
             //given
-            const previous = 'previous.route';
-            const previousOptions = {opt: 'my options'};
+            const next = 'previous.route';
+            const nextOptions = {opt: 'my options'};
 
-            routeState.next = previous;
-            routeState.nextOptions = previousOptions;
+            routeState.next = next;
+            routeState.nextOptions = nextOptions;
 
             //when
             RouteStateService.resetNext();
 
             //then
+            expect(routeState.next).toBe('nav.index.datasets');
+            expect(routeState.nextOptions).toEqual({folderPath: ''});
+        }));
+    });
+
+    describe('reset', () => {
+        it('should reset all routes', inject((routeState, RouteStateService) => {
+            //given
+            const previous = 'previous.route';
+            const previousOptions = {opt: 'my options'};
+
+            const next = 'previous.route';
+            const nextOptions = {opt: 'my options'};
+
+            routeState.previous = previous;
+            routeState.previousOptions = previousOptions;
+
+            routeState.next = next;
+            routeState.nextOptions = nextOptions;
+
+            //when
+            RouteStateService.reset();
+
+            //then
+            expect(routeState.previous).toBe('nav.index.datasets');
+            expect(routeState.previousOptions).toEqual({folderPath: ''});
             expect(routeState.next).toBe('nav.index.datasets');
             expect(routeState.nextOptions).toEqual({folderPath: ''});
         }));

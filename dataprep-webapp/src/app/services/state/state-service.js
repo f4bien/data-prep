@@ -39,6 +39,7 @@ export function StateService(RouteStateService, routeState, //
         setNextRoute: RouteStateService.setNext,
         resetPreviousRoute: RouteStateService.resetPrevious,
         resetNextRoute: RouteStateService.resetNext,
+        resetRoute: RouteStateService.reset.bind(RouteStateService),
 
         //playground
         resetPlayground: PlaygroundStateService.reset,

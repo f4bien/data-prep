@@ -44,4 +44,9 @@ export class RouteStateService {
         routeState.next = 'nav.index.datasets';
         routeState.nextOptions = {folderPath: ''};
     }
+
+    reset() {
+        this.resetPrevious();
+        this.resetNext();
+    }
 }

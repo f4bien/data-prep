@@ -24,9 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.format.CSVFormatFamily;
 import org.talend.dataprep.schema.FormatGuesser;
 import org.talend.dataprep.schema.SchemaParser;
-import org.talend.dataprep.schema.unsupported.UnsupportedFormatGuess;
+import org.talend.dataprep.format.UnsupportedFormatFamily;
 
 /**
  * <h3>CSV implementation of the formatGuesser</h3>
@@ -70,11 +71,11 @@ public class CSVFormatGuesser implements FormatGuesser {
 
     /** The csv format guesser. */
     @Autowired
-    private CSVFormatGuess csvFormatGuess;
+    private CSVFormatFamily csvFormatGuess;
 
     /** The fallback guess if the input is not CSV compliant. */
     @Autowired
-    private UnsupportedFormatGuess fallbackGuess;
+    private UnsupportedFormatFamily fallbackGuess;
 
     @Autowired
     private CSVFormatUtils csvFormatUtils;
@@ -105,7 +106,7 @@ public class CSVFormatGuesser implements FormatGuesser {
 
         // if the dataset metadata is updated, let's use the separator set as the one to use
         Optional<Character> specifiedSeparator = Optional.empty();
-        final String temp = request.getMetadata().getContent().getParameters().get(CSVFormatGuess.SEPARATOR_PARAMETER);
+        final String temp = request.getMetadata().getContent().getParameters().get(CSVFormatFamily.SEPARATOR_PARAMETER);
         if (temp != null && StringUtils.isNotEmpty(temp)) {
             specifiedSeparator = Optional.of(temp.charAt(0));
         }

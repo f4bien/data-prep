@@ -17,7 +17,8 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
-import org.talend.dataprep.schema.FormatGuess;
+import org.talend.dataprep.format.CSVFormatFamily;
+import org.talend.dataprep.format.FormatFamily;
 import org.talend.dataprep.schema.FormatGuesser;
 import org.talend.dataprep.schema.SchemaParser;
 import org.talend.dataprep.schema.SchemaUpdater;
@@ -34,7 +35,7 @@ public class CSVSchemaUpdater implements SchemaUpdater {
 
     /** The csv format guesser. */
     @Autowired
-    private CSVFormatGuess csvFormatGuess;
+    private CSVFormatFamily csvFormatGuess;
 
     /** The CSV format guesser. */
     @Autowired
@@ -45,7 +46,7 @@ public class CSVSchemaUpdater implements SchemaUpdater {
      */
     @Override
     public boolean accept(DataSetMetadata metadata) {
-        return StringUtils.equals(metadata.getContent().getFormatGuessId(), CSVFormatGuess.BEAN_ID);
+        return StringUtils.equals(metadata.getContent().getFormatGuessId(), CSVFormatFamily.BEAN_ID);
     }
 
     /**
@@ -62,7 +63,7 @@ public class CSVSchemaUpdater implements SchemaUpdater {
      * @return the format guess.
      */
     @Override
-    public FormatGuess getFormatGuess() {
+    public FormatFamily getFormatGuess() {
         return csvFormatGuess;
     }
 

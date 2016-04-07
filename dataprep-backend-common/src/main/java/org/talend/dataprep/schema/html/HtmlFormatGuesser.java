@@ -25,9 +25,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.format.HtmlFormatFamily;
 import org.talend.dataprep.schema.FormatGuesser;
 import org.talend.dataprep.schema.SchemaParser;
-import org.talend.dataprep.schema.unsupported.UnsupportedFormatGuess;
+import org.talend.dataprep.format.UnsupportedFormatFamily;
 
 @Component("formatGuesser#html")
 public class HtmlFormatGuesser implements FormatGuesser {
@@ -45,11 +46,11 @@ public class HtmlFormatGuesser implements FormatGuesser {
     private List<Pattern> patterns;
 
     @Autowired
-    private HtmlFormatGuess htmlFormatGuess;
+    private HtmlFormatFamily htmlFormatGuess;
 
     /** The fallback guess if the input is not Excel compliant. */
     @Autowired
-    private UnsupportedFormatGuess fallbackGuess;
+    private UnsupportedFormatFamily fallbackGuess;
 
     /**
      * Default empty constructor.

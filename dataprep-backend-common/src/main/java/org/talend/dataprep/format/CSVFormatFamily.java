@@ -11,18 +11,19 @@
 //
 //  ============================================================================
 
-package org.talend.dataprep.schema.csv;
+package org.talend.dataprep.format;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.talend.dataprep.schema.DraftValidator;
-import org.talend.dataprep.schema.FormatGuess;
 import org.talend.dataprep.schema.SchemaParser;
 import org.talend.dataprep.schema.Serializer;
+import org.talend.dataprep.schema.csv.CSVSchemaParser;
+import org.talend.dataprep.schema.csv.CSVSerializer;
 
-@Service(CSVFormatGuess.BEAN_ID)
+@Service(CSVFormatFamily.BEAN_ID)
 @SuppressWarnings("InsufficientBranchCoverage")
-public class CSVFormatGuess implements FormatGuess {
+public class CSVFormatFamily implements FormatFamily {
 
     /** Name of the separator parameter. */
     public static final String SEPARATOR_PARAMETER = "SEPARATOR"; //$NON-NLS-1$
@@ -39,18 +40,13 @@ public class CSVFormatGuess implements FormatGuess {
     @Autowired
     private CSVSerializer serializer;
 
-    public CSVFormatGuess() {
+    public CSVFormatFamily() {
         //
     }
 
     @Override
     public String getMediaType() {
         return "text/csv"; //$NON-NLS-1$
-    }
-
-    @Override
-    public float getConfidence() {
-        return 0.9f;
     }
 
     @Override

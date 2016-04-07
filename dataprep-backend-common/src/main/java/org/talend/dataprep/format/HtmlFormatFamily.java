@@ -11,17 +11,18 @@
 //
 //  ============================================================================
 
-package org.talend.dataprep.schema.html;
+package org.talend.dataprep.format;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.schema.DraftValidator;
-import org.talend.dataprep.schema.FormatGuess;
 import org.talend.dataprep.schema.SchemaParser;
 import org.talend.dataprep.schema.Serializer;
+import org.talend.dataprep.schema.html.HtmlSchemaParser;
+import org.talend.dataprep.schema.html.HtmlSerializer;
 
-@Component(HtmlFormatGuess.BEAN_ID)
-public class HtmlFormatGuess implements FormatGuess {
+@Component(HtmlFormatFamily.BEAN_ID)
+public class HtmlFormatFamily implements FormatFamily {
 
     // Html content is not Excel, but currently only HTML content wrapped in Excel is supported, thus this MIME.
     public static final String MEDIA_TYPE = "application/vnd.ms-excel";
@@ -37,11 +38,6 @@ public class HtmlFormatGuess implements FormatGuess {
     @Override
     public String getMediaType() {
         return MEDIA_TYPE;
-    }
-
-    @Override
-    public float getConfidence() {
-        return 1;
     }
 
     @Override

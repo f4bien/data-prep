@@ -14,6 +14,7 @@
 package org.talend.dataprep.schema;
 
 import org.talend.dataprep.api.dataset.DataSetMetadata;
+import org.talend.dataprep.format.FormatFamily;
 
 /**
  * Update the schema from an updated metadata.
@@ -39,6 +40,6 @@ public interface SchemaUpdater {
     /**
      * @return the format guess.
      */
-    FormatGuess getFormatGuess();
+    FormatFamily getFormatGuess();
 
 }

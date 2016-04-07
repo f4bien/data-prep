@@ -13,10 +13,12 @@
 
 package org.talend.dataprep.schema;
 
+import org.talend.dataprep.format.FormatFamily;
+
 import java.util.Map;
 
 /**
- * Represents a class able to create {@link org.talend.dataprep.schema.FormatGuess} from a data set content.
+ * Represents a class able to create {@link FormatFamily} from a data set content.
  */
 public interface FormatGuesser {
 
@@ -38,8 +40,8 @@ public interface FormatGuesser {
      *
      * @param request The Schema parser request. Content cannot be <code>null</code>.
      * @param encoding The encoding to use to read content in <code>stream</code>.
-     * @return A {@link org.talend.dataprep.schema.FormatGuess guess} that can never be null (see
-     * {@link FormatGuess#getConfidence()}.
+     * @return A {@link FormatFamily guess} that can never be null (see
+     * {@link FormatFamily#getConfidence()}.
      * @throws IllegalArgumentException If stream is <code>null</code>.
      */
     Result guess(SchemaParser.Request request, String encoding);
@@ -50,7 +52,7 @@ public interface FormatGuesser {
     class Result {
 
         /** The format guess. */
-        private FormatGuess formatGuess;
+        private FormatFamily format;
 
         /** The parameters (e.g. separator for CSV). */
         private Map<String, String> parameters;
@@ -61,28 +63,28 @@ public interface FormatGuesser {
         /**
          * Constructor.
          *
-         * @param formatGuess the format guess.
+         * @param format the format guess.
          * @param encoding the encoding to use.
          * @param parameters the needed parameters.
          */
-        public Result(FormatGuess formatGuess, String encoding, Map<String, String> parameters) {
-            this.formatGuess = formatGuess;
+        public Result(FormatFamily format, String encoding, Map<String, String> parameters) {
+            this.format = format;
             this.encoding = encoding;
             this.parameters = parameters;
         }
 
         /**
-         * @return the FormatGuess.
+         * @return the Format.
          */
-        public FormatGuess getFormatGuess() {
-            return formatGuess;
+        public FormatFamily getFormat() {
+            return format;
         }
 
         /**
-         * @param formatGuess the formatGuess to set.
+         * @param format the format to set.
          */
-        public void setFormatGuess(FormatGuess formatGuess) {
-            this.formatGuess = formatGuess;
+        public void setFormat(FormatFamily format) {
+            this.format = format;
         }
 
         /**
@@ -117,7 +119,7 @@ public interface FormatGuesser {
 
             Result result = (Result) o;
 
-            if (!formatGuess.equals(result.formatGuess)) {
+            if (!format.equals(result.format)) {
                 return false;
             }
             return parameters.equals(result.parameters);
@@ -126,14 +128,14 @@ public interface FormatGuesser {
 
         @Override
         public int hashCode() {
-            int result = formatGuess.hashCode();
+            int result = format.hashCode();
             result = 31 * result + parameters.hashCode();
             return result;
         }
 
         @Override
         public String toString() {
-            return "Result{" + "formatGuess=" + formatGuess != null ? formatGuess.getClass().getSimpleName()
+            return "Result{" + "format=" + format != null ? format.getClass().getSimpleName()
                     : "null" + ", encoding='" + encoding + '\'' + '}';
         }
     }

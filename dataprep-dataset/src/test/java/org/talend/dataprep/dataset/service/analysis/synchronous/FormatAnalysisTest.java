@@ -24,8 +24,8 @@ import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.dataset.DataSetRow;
 import org.talend.dataprep.dataset.DataSetBaseTest;
 import org.talend.dataprep.dataset.service.DataSetServiceTest;
-import org.talend.dataprep.schema.csv.CSVFormatGuess;
-import org.talend.dataprep.schema.xls.XlsFormatGuess;
+import org.talend.dataprep.format.CSVFormatFamily;
+import org.talend.dataprep.format.XlsFormatFamily;
 
 
 public class FormatAnalysisTest extends DataSetBaseTest {
@@ -47,7 +47,7 @@ public class FormatAnalysisTest extends DataSetBaseTest {
         formatAnalysis.analyze("1234");
         final DataSetMetadata actual = dataSetMetadataRepository.get("1234");
         assertThat(actual, notNullValue());
-        assertThat(actual.getContent().getFormatGuessId(), is(CSVFormatGuess.BEAN_ID));
+        assertThat(actual.getContent().getFormatGuessId(), is(CSVFormatFamily.BEAN_ID));
         assertThat(actual.getContent().getMediaType(), is("text/csv"));
         assertThat(actual.getContent().getParameters().get("SEPARATOR"), is(";"));
     }
@@ -60,7 +60,7 @@ public class FormatAnalysisTest extends DataSetBaseTest {
         formatAnalysis.analyze("1234");
         final DataSetMetadata actual = dataSetMetadataRepository.get("1234");
         assertThat(actual, notNullValue());
-        assertThat(actual.getContent().getFormatGuessId(), is(CSVFormatGuess.BEAN_ID));
+        assertThat(actual.getContent().getFormatGuessId(), is(CSVFormatFamily.BEAN_ID));
         assertThat(actual.getContent().getMediaType(), is("text/csv"));
         assertThat(actual.getContent().getParameters().get("SEPARATOR"), is("\t"));
         assertThat(actual.getEncoding(), is("UTF-16"));
@@ -87,7 +87,7 @@ public class FormatAnalysisTest extends DataSetBaseTest {
         formatAnalysis.analyze("1234");
         final DataSetMetadata actual = dataSetMetadataRepository.get("1234");
         assertThat(actual, notNullValue());
-        assertThat(actual.getContent().getFormatGuessId(), is(XlsFormatGuess.BEAN_ID));
+        assertThat(actual.getContent().getFormatGuessId(), is(XlsFormatFamily.BEAN_ID));
         assertThat(actual.getContent().getMediaType(), is("application/vnd.ms-excel"));
         assertThat(actual.getContent().getParameters().isEmpty(), is(true));
     }

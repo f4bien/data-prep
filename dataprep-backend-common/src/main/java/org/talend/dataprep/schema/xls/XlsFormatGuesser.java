@@ -27,9 +27,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.format.XlsFormatFamily;
 import org.talend.dataprep.schema.FormatGuesser;
 import org.talend.dataprep.schema.SchemaParser;
-import org.talend.dataprep.schema.unsupported.UnsupportedFormatGuess;
+import org.talend.dataprep.format.UnsupportedFormatFamily;
 
 @Component("formatGuesser#xls")
 public class XlsFormatGuesser implements FormatGuesser {
@@ -37,11 +38,11 @@ public class XlsFormatGuesser implements FormatGuesser {
     private static final Logger LOGGER = LoggerFactory.getLogger(XlsFormatGuesser.class);
 
     @Autowired
-    private XlsFormatGuess xlsFormatGuess;
+    private XlsFormatFamily xlsFormatFamilyGuess;
 
     /** The fallback guess if the input is not Excel compliant. */
     @Autowired
-    private UnsupportedFormatGuess fallbackGuess;
+    private UnsupportedFormatFamily fallbackGuess;
 
     @Override
     public boolean accept(String encoding) {
@@ -76,7 +77,7 @@ public class XlsFormatGuesser implements FormatGuesser {
             LOGGER.debug("fail to read content, {} does not seem to be an xls file", request.getMetadata().getId(), e);
         }
 
-        return xlsFormat ? new FormatGuesser.Result(xlsFormatGuess, encoding, Collections.emptyMap()) //
+        return xlsFormat ? new FormatGuesser.Result(xlsFormatFamilyGuess, encoding, Collections.emptyMap()) //
                 : new FormatGuesser.Result(fallbackGuess, "UTF-8", Collections.emptyMap());
     }
 }

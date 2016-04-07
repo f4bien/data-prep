@@ -11,31 +11,25 @@
 //
 //  ============================================================================
 
-package org.talend.dataprep.schema.unsupported;
+package org.talend.dataprep.format;
 
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.schema.DraftValidator;
-import org.talend.dataprep.schema.FormatGuess;
 import org.talend.dataprep.schema.SchemaParser;
 import org.talend.dataprep.schema.Serializer;
 
 /**
- * A special implementation of {@link FormatGuess} to serve as fallback and indicates the provided content is not
+ * A special implementation of {@link FormatFamily} to serve as fallback and indicates the provided content is not
  * supported in data prep.
  */
-@Component(UnsupportedFormatGuess.BEAN_ID)
-public class UnsupportedFormatGuess implements FormatGuess {
+@Component(UnsupportedFormatFamily.BEAN_ID)
+public class UnsupportedFormatFamily implements FormatFamily {
 
     protected static final String BEAN_ID = "formatGuess#any";
 
     @Override
     public String getMediaType() {
         return "*/*"; //$NON-NLS-1$
-    }
-
-    @Override
-    public float getConfidence() {
-        return 0;
     }
 
     @Override

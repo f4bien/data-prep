@@ -29,9 +29,10 @@ import org.apache.tools.ant.filters.StringInputStream;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.dataprep.format.CSVFormatFamily;
 import org.talend.dataprep.schema.AbstractSchemaTestUtils;
 import org.talend.dataprep.schema.FormatGuesser;
-import org.talend.dataprep.schema.unsupported.UnsupportedFormatGuess;
+import org.talend.dataprep.format.UnsupportedFormatFamily;
 
 /**
  * Unit test for the LineBasedFormatGuesser.
@@ -61,12 +62,12 @@ public class CSVFormatGuesserTest extends AbstractSchemaTestUtils {
     public void should_not_guess() throws IOException {
         FormatGuesser.Result actual = guesser.guess(getRequest(new ByteArrayInputStream(new byte[0]), "#1"), "UTF-8");
         Assert.assertNotNull(actual);
-        assertTrue(actual.getFormatGuess() instanceof UnsupportedFormatGuess);
+        assertTrue(actual.getFormat() instanceof UnsupportedFormatFamily);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void read_null_csv_file() throws Exception {
-        guesser.guess(null, "UTF-8").getFormatGuess();
+        guesser.guess(null, "UTF-8").getFormat();
     }
 
     /**
@@ -78,7 +79,7 @@ public class CSVFormatGuesserTest extends AbstractSchemaTestUtils {
             FormatGuesser.Result actual = guesser.guess(getRequest(inputStream, "#2"), "UTF-8");
 
             Assert.assertNotNull(actual);
-            assertTrue(actual.getFormatGuess() instanceof CSVFormatGuess);
+            assertTrue(actual.getFormat() instanceof CSVFormatFamily);
         }
     }
 
@@ -91,8 +92,8 @@ public class CSVFormatGuesserTest extends AbstractSchemaTestUtils {
             FormatGuesser.Result actual = guesser.guess(getRequest(inputStream, "#3"), "UTF-8");
 
             Assert.assertNotNull(actual);
-            assertTrue(actual.getFormatGuess() instanceof CSVFormatGuess);
-            char separator = actual.getParameters().get(CSVFormatGuess.SEPARATOR_PARAMETER).charAt(0);
+            assertTrue(actual.getFormat() instanceof CSVFormatFamily);
+            char separator = actual.getParameters().get(CSVFormatFamily.SEPARATOR_PARAMETER).charAt(0);
             assertEquals(separator, ';');
         }
     }
@@ -106,8 +107,8 @@ public class CSVFormatGuesserTest extends AbstractSchemaTestUtils {
             FormatGuesser.Result actual = guesser.guess(getRequest(inputStream, "#4"), "UTF-8");
 
             Assert.assertNotNull(actual);
-            assertTrue(actual.getFormatGuess() instanceof CSVFormatGuess);
-            char separator = actual.getParameters().get(CSVFormatGuess.SEPARATOR_PARAMETER).charAt(0);
+            assertTrue(actual.getFormat() instanceof CSVFormatFamily);
+            char separator = actual.getParameters().get(CSVFormatFamily.SEPARATOR_PARAMETER).charAt(0);
             assertEquals(';', separator);
         }
     }
@@ -121,8 +122,8 @@ public class CSVFormatGuesserTest extends AbstractSchemaTestUtils {
             FormatGuesser.Result actual = guesser.guess(getRequest(inputStream, "#5"), "UTF-8");
 
             Assert.assertNotNull(actual);
-            assertTrue(actual.getFormatGuess() instanceof CSVFormatGuess);
-            char separator = actual.getParameters().get(CSVFormatGuess.SEPARATOR_PARAMETER).charAt(0);
+            assertTrue(actual.getFormat() instanceof CSVFormatFamily);
+            char separator = actual.getParameters().get(CSVFormatFamily.SEPARATOR_PARAMETER).charAt(0);
             assertEquals(separator, ';');
         }
     }
@@ -136,8 +137,8 @@ public class CSVFormatGuesserTest extends AbstractSchemaTestUtils {
             FormatGuesser.Result actual = guesser.guess(getRequest(inputStream, "#6"), "UTF-8");
 
             Assert.assertNotNull(actual);
-            assertTrue(actual.getFormatGuess() instanceof CSVFormatGuess);
-            char separator = actual.getParameters().get(CSVFormatGuess.SEPARATOR_PARAMETER).charAt(0);
+            assertTrue(actual.getFormat() instanceof CSVFormatFamily);
+            char separator = actual.getParameters().get(CSVFormatFamily.SEPARATOR_PARAMETER).charAt(0);
             assertEquals(';', separator);
         }
     }
@@ -151,8 +152,8 @@ public class CSVFormatGuesserTest extends AbstractSchemaTestUtils {
             FormatGuesser.Result actual = guesser.guess(getRequest(inputStream, "#7"), "UTF-8");
 
             Assert.assertNotNull(actual);
-            assertTrue(actual.getFormatGuess() instanceof CSVFormatGuess);
-            char separator = actual.getParameters().get(CSVFormatGuess.SEPARATOR_PARAMETER).charAt(0);
+            assertTrue(actual.getFormat() instanceof CSVFormatFamily);
+            char separator = actual.getParameters().get(CSVFormatFamily.SEPARATOR_PARAMETER).charAt(0);
             assertEquals(' ', separator);
         }
     }
@@ -176,8 +177,8 @@ public class CSVFormatGuesserTest extends AbstractSchemaTestUtils {
             FormatGuesser.Result actual = guesser.guess(getRequest(inputStream, "#8"), "UTF-8");
 
             Assert.assertNotNull(actual);
-            assertTrue(actual.getFormatGuess() instanceof CSVFormatGuess);
-            char separator = actual.getParameters().get(CSVFormatGuess.SEPARATOR_PARAMETER).charAt(0);
+            assertTrue(actual.getFormat() instanceof CSVFormatFamily);
+            char separator = actual.getParameters().get(CSVFormatFamily.SEPARATOR_PARAMETER).charAt(0);
             assertEquals(',', separator);
         }
     }
@@ -191,8 +192,8 @@ public class CSVFormatGuesserTest extends AbstractSchemaTestUtils {
             FormatGuesser.Result actual = guesser.guess(getRequest(inputStream, "#9"), "UTF-8");
 
             Assert.assertNotNull(actual);
-            assertTrue(actual.getFormatGuess() instanceof CSVFormatGuess);
-            char separator = actual.getParameters().get(CSVFormatGuess.SEPARATOR_PARAMETER).charAt(0);
+            assertTrue(actual.getFormat() instanceof CSVFormatFamily);
+            char separator = actual.getParameters().get(CSVFormatFamily.SEPARATOR_PARAMETER).charAt(0);
             assertEquals(',', separator);
         }
     }
@@ -215,8 +216,8 @@ public class CSVFormatGuesserTest extends AbstractSchemaTestUtils {
             FormatGuesser.Result actual = guesser.guess(getRequest(inputStream, "#10"), "UTF-8");
 
             Assert.assertNotNull(actual);
-            assertTrue(actual.getFormatGuess() instanceof CSVFormatGuess);
-            char separator = actual.getParameters().get(CSVFormatGuess.SEPARATOR_PARAMETER).charAt(0);
+            assertTrue(actual.getFormat() instanceof CSVFormatFamily);
+            char separator = actual.getParameters().get(CSVFormatFamily.SEPARATOR_PARAMETER).charAt(0);
             assertEquals(';', separator);
         }
 
@@ -230,8 +231,8 @@ public class CSVFormatGuesserTest extends AbstractSchemaTestUtils {
             FormatGuesser.Result actual = guesser.guess(getRequest(inputStream, "#11"), "UTF-8");
 
             Assert.assertNotNull(actual);
-            assertTrue(actual.getFormatGuess() instanceof CSVFormatGuess);
-            char separator = actual.getParameters().get(CSVFormatGuess.SEPARATOR_PARAMETER).charAt(0);
+            assertTrue(actual.getFormat() instanceof CSVFormatFamily);
+            char separator = actual.getParameters().get(CSVFormatFamily.SEPARATOR_PARAMETER).charAt(0);
             assertEquals(';', separator);
         }
     }
@@ -255,7 +256,7 @@ public class CSVFormatGuesserTest extends AbstractSchemaTestUtils {
             FormatGuesser.Result actual = guesser.guess(getRequest(inputStream, "#12"), "UTF-8");
 
             Assert.assertNotNull(actual);
-            assertTrue(actual.getFormatGuess() instanceof UnsupportedFormatGuess);
+            assertTrue(actual.getFormat() instanceof UnsupportedFormatFamily);
         }
 
         // wrong character
@@ -269,7 +270,7 @@ public class CSVFormatGuesserTest extends AbstractSchemaTestUtils {
             FormatGuesser.Result actual = guesser.guess(getRequest(inputStream, "#13"), "UTF-8");
 
             Assert.assertNotNull(actual);
-            assertTrue(actual.getFormatGuess() instanceof UnsupportedFormatGuess);
+            assertTrue(actual.getFormat() instanceof UnsupportedFormatFamily);
         }
     }
 
@@ -289,8 +290,8 @@ public class CSVFormatGuesserTest extends AbstractSchemaTestUtils {
             FormatGuesser.Result actual = guesser.guess(getRequest(inputStream, "#13"), "UTF-8");
 
             Assert.assertNotNull(actual);
-            assertTrue(actual.getFormatGuess() instanceof CSVFormatGuess);
-            char separator = actual.getParameters().get(CSVFormatGuess.SEPARATOR_PARAMETER).charAt(0);
+            assertTrue(actual.getFormat() instanceof CSVFormatFamily);
+            char separator = actual.getParameters().get(CSVFormatFamily.SEPARATOR_PARAMETER).charAt(0);
             assertEquals(',', separator);
         }
     }
@@ -306,8 +307,8 @@ public class CSVFormatGuesserTest extends AbstractSchemaTestUtils {
             FormatGuesser.Result actual = guesser.guess(getRequest(inputStream, "#14"), "UTF-8");
 
             Assert.assertNotNull(actual);
-            assertTrue(actual.getFormatGuess() instanceof CSVFormatGuess);
-            char separator = actual.getParameters().get(CSVFormatGuess.SEPARATOR_PARAMETER).charAt(0);
+            assertTrue(actual.getFormat() instanceof CSVFormatFamily);
+            char separator = actual.getParameters().get(CSVFormatFamily.SEPARATOR_PARAMETER).charAt(0);
             List<String> header = csvFormatUtils.retrieveHeader(actual.getParameters());
             assertEquals(';', separator);
             List<String> expected = Arrays.asList("id", "first_name", "last_name", "email", "job_title", "company", "city", "state",

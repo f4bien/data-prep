@@ -27,11 +27,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.api.type.Type;
+import org.talend.dataprep.format.HtmlFormatFamily;
 import org.talend.dataprep.schema.AbstractSchemaTestUtils;
 import org.talend.dataprep.schema.FormatGuesser;
 import org.talend.dataprep.schema.SchemaParser;
 import org.talend.dataprep.schema.SchemaParserResult;
-import org.talend.dataprep.schema.unsupported.UnsupportedFormatGuess;
+import org.talend.dataprep.format.UnsupportedFormatFamily;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
@@ -54,10 +55,10 @@ public class HtmlFormatTest extends AbstractSchemaTestUtils {
     private HtmlFormatGuesser htmlFormatGuesser;
 
     @Autowired
-    private HtmlFormatGuess htmlFormatGuess;
+    private HtmlFormatFamily htmlFormatGuess;
 
     @Autowired
-    private UnsupportedFormatGuess unsupportedFormatGuess;
+    private UnsupportedFormatFamily unsupportedFormatFamilyGuess;
 
     @Test
     public void format_guesser_accept() throws Exception {
@@ -78,7 +79,7 @@ public class HtmlFormatTest extends AbstractSchemaTestUtils {
 
         FormatGuesser.Result result = htmlFormatGuesser.guess(request, "UTF-16");
 
-        Assertions.assertThat(result.getFormatGuess()).isEqualTo(htmlFormatGuess);
+        Assertions.assertThat(result.getFormat()).isEqualTo(htmlFormatGuess);
         Assertions.assertThat(result.getParameters()) //
                 .contains(MapEntry.entry(HtmlFormatGuesser.HEADER_SELECTOR_KEY,
                         htmlFormatGuesser.getPatterns().get(0).getHeaderSelector()));
@@ -97,7 +98,7 @@ public class HtmlFormatTest extends AbstractSchemaTestUtils {
 
         FormatGuesser.Result result = htmlFormatGuesser.guess(request, "UTF-16");
 
-        Assertions.assertThat(result.getFormatGuess()).isEqualTo(unsupportedFormatGuess);
+        Assertions.assertThat(result.getFormat()).isEqualTo(unsupportedFormatFamilyGuess);
     }
 
     @Test

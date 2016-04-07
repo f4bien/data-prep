@@ -1,15 +1,15 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
 package org.talend.dataprep.dataset.service.analysis.synchronous;
 
@@ -31,10 +31,13 @@ import org.talend.dataprep.dataset.store.content.ContentStoreRouter;
 import org.talend.dataprep.dataset.store.metadata.DataSetMetadataRepository;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.DataSetErrorCodes;
+import org.talend.dataprep.format.Format;
+import org.talend.dataprep.format.FormatFamily;
+import org.talend.dataprep.format.FormatDetector;
 import org.talend.dataprep.lock.DistributedLock;
 import org.talend.dataprep.log.Markers;
 import org.talend.dataprep.schema.*;
-import org.talend.dataprep.schema.unsupported.UnsupportedFormatGuess;
+import org.talend.dataprep.format.UnsupportedFormatFamily;
 import org.talend.dataprep.schema.unsupported.UnsupportedFormatGuesser;
 
 /**
@@ -68,6 +71,9 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
     @Autowired
     List<SchemaUpdater> updaters = new LinkedList<>();
 
+    @Autowired
+    FormatDetector detector;
+
     /** Bean that list supported encodings. */
     @Autowired
     private EncodingSupport encodings;
@@ -89,28 +95,43 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
         try {
             DataSetMetadata metadata = repository.get(dataSetId);
             if (metadata != null) {
-                // Guess media type based on InputStream
-                Set<FormatGuesser.Result> mediaTypes = guessMediaTypes(dataSetId, metadata);
-                // Check if only found format is Unsupported Format.
-                if (mediaTypes.size() == 1) {
-                    final FormatGuesser.Result result = mediaTypes.iterator().next();
-                    if (UnsupportedFormatGuess.class.isAssignableFrom(result.getFormatGuess().getClass())) {
-                        // Clean up content & metadata (don't keep invalid information)
-                        store.delete(metadata);
-                        repository.remove(dataSetId);
-                        // Throw exception to indicate unsupported content
-                        throw new TDPException(DataSetErrorCodes.UNSUPPORTED_CONTENT);
-                    }
+
+                /*
+                 * LOG.info(marker, "Format guessing is starting"); final long start = System.nanoTime(); // Guess media
+                 * type based on InputStream Set<FormatGuesser.Result> mediaTypes = guessMediaTypes(dataSetId,
+                 * metadata); // Check if only found format is Unsupported Format. if (mediaTypes.size() == 1) { final
+                 * FormatGuesser.Result result = mediaTypes.iterator().next(); if
+                 * (UnsupportedFormat.class.isAssignableFrom(result.getFormat().getClass())) { // Clean up
+                 * content & metadata (don't keep invalid information) store.delete(metadata);
+                 * repository.remove(dataSetId); // Throw exception to indicate unsupported content throw new
+                 * TDPException(DataSetErrorCodes.UNSUPPORTED_CONTENT); } } // Select best format guess
+                 * List<FormatGuesser.Result> orderedGuess = new LinkedList<>(mediaTypes);
+                 * Collections.sort(orderedGuess, (g1, g2) -> // Float.compare(g2.getFormat().getConfidence(),
+                 * g1.getFormat().getConfidence()));
+                 */
+
+                final long start = System.nanoTime();
+                Format detectedFormat;
+                try (InputStream content = store.getAsRaw(metadata)) {
+                    detectedFormat = detector.detectFormat(content);
+                } catch (Exception e) {
+                    LOG.debug(marker, "Problem during detection {}", e.getMessage());
+                    detectedFormat = null;
                 }
-                // Select best format guess
-                List<FormatGuesser.Result> orderedGuess = new LinkedList<>(mediaTypes);
-                Collections.sort(orderedGuess, (g1, g2) -> //
-                Float.compare(g2.getFormatGuess().getConfidence(), g1.getFormatGuess().getConfidence()));
 
-                FormatGuesser.Result bestGuessResult = orderedGuess.get(0);
-                LOG.debug(marker, "using {} to parse the dataset", bestGuessResult);
+                final long end = System.nanoTime();
+                LOG.info(marker, "Format guessing is ending in {}", end - start);
+                LOG.debug(marker, "using {} to parse the dataset", detectedFormat);
+                if (detectedFormat == null
+                        || UnsupportedFormatFamily.class.isAssignableFrom(detectedFormat.getFormatFamily().getClass())) {
+                    // Clean up content & metadata (don't keep invalid information)
+                    store.delete(metadata);
+                    repository.remove(dataSetId);
+                    // Throw exception to indicate unsupported content
+                    throw new TDPException(DataSetErrorCodes.UNSUPPORTED_CONTENT);
+                }
 
-                internalUpdateMetadata(metadata, bestGuessResult);
+                internalUpdateMetadata(metadata, detectedFormat);
 
                 LOG.debug(marker, "format analysed for dataset");
             } else {
@@ -125,17 +146,18 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
      * Update the given dataset metadata with the format guesser result.
      *
      * @param metadata the dataset metadata to update.
-     * @param result the format guesser result.
+     * @param format the format of the dataset
      */
-    private void internalUpdateMetadata(DataSetMetadata metadata, FormatGuesser.Result result) {
-        FormatGuess bestGuess = result.getFormatGuess();
+    private void internalUpdateMetadata(DataSetMetadata metadata, Format format) {
+        FormatFamily formatFamily = format.getFormatFamily();
         DataSetContent dataSetContent = metadata.getContent();
-        dataSetContent.setParameters(result.getParameters());
-        dataSetContent.setFormatGuessId(bestGuess.getBeanId());
-        dataSetContent.setMediaType(bestGuess.getMediaType());
-        metadata.setEncoding(result.getEncoding());
 
-        parseColumnNameInformation(metadata.getId(), metadata, bestGuess);
+        dataSetContent.setFormatGuessId(formatFamily.getBeanId());
+        dataSetContent.setMediaType(formatFamily.getMediaType());
+        metadata.setEncoding(format.getCharset().name());
+
+        Map<String, String> parameters = parseColumnNameInformation(metadata.getId(), metadata, formatFamily);
+        dataSetContent.setParameters(parameters);
 
         repository.add(metadata);
     }
@@ -183,6 +205,7 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
 
         for (FormatGuesser guesser : guessers) {
 
+            LOG.info("Working with {} guesser", guesser);
             // not worth spending time reading
             if (guesser instanceof UnsupportedFormatGuesser) {
                 continue;
@@ -190,6 +213,7 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
             // Try to read content given certified encodings
             final Collection<Charset> availableCharsets = encodings.getSupportedCharsets();
             for (Charset charset : availableCharsets) {
+
                 if (!guesser.accept(charset.name())) {
                     // Guesser does not support charset, skip it
                     LOG.debug("Skip encoding {} for guesser {}.", charset.name(), guesser.getClass().getSimpleName());
@@ -199,7 +223,7 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
                     LOG.debug(marker, "try reading with {} encoded in {}", guesser.getClass().getSimpleName(), charset.name());
                     FormatGuesser.Result mediaType = guesser.guess(new SchemaParser.Request(content, metadata), charset.name());
                     mediaTypes.add(mediaType);
-                    if (!(mediaType.getFormatGuess() instanceof UnsupportedFormatGuess)) {
+                    if (!(mediaType.getFormat() instanceof UnsupportedFormatFamily)) {
                         break;
                     }
                 } catch (IOException e) {
@@ -207,6 +231,7 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
                 }
             }
         }
+
         LOG.debug(marker, "found {}", mediaTypes);
         return mediaTypes;
     }
@@ -218,7 +243,9 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
      * @param metadata the dataset metadata to parse.
      * @param bestGuess the format guesser.
      */
-    private void parseColumnNameInformation(String dataSetId, DataSetMetadata metadata, FormatGuess bestGuess) {
+    private Map<String, String> parseColumnNameInformation(String dataSetId, DataSetMetadata metadata, FormatFamily bestGuess) {
+
+        Map<String, String> result = new HashMap<>();
         final Marker marker = Markers.dataset(dataSetId);
         LOG.debug(marker, "Parsing column information...");
         try (InputStream content = store.getAsRaw(metadata)) {
@@ -231,7 +258,7 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
                 metadata.setSchemaParserResult(schemaParserResult);
                 repository.add(metadata);
                 LOG.info(Markers.dataset(dataSetId), "format analysed");
-                return;
+                return result ;
             }
             metadata.setDraft(false);
             if (schemaParserResult.getSheetContents().isEmpty()) {
@@ -242,6 +269,7 @@ public class FormatAnalysis implements SynchronousDataSetAnalyzer {
             throw new TDPException(DataSetErrorCodes.UNABLE_TO_READ_DATASET_CONTENT, e);
         }
         LOG.debug(marker, "Parsed column information.");
+        return result;
     }
 
     @Override

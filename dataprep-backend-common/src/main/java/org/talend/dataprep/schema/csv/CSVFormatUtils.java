@@ -14,7 +14,7 @@
 package org.talend.dataprep.schema.csv;
 
 import static org.talend.dataprep.exception.error.CommonErrorCodes.UNABLE_TO_SERIALIZE_TO_JSON;
-import static org.talend.dataprep.schema.csv.CSVFormatGuess.*;
+import static org.talend.dataprep.format.CSVFormatFamily.*;
 
 import java.util.Collections;
 import java.util.HashMap;

@@ -17,6 +17,7 @@ import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.talend.dataprep.format.UnsupportedFormatFamily;
 import org.talend.dataprep.schema.FormatGuesser;
 import org.talend.dataprep.schema.SchemaParser;
 
@@ -24,7 +25,7 @@ import org.talend.dataprep.schema.SchemaParser;
 public class UnsupportedFormatGuesser implements FormatGuesser {
 
     @Autowired
-    private UnsupportedFormatGuess noOpFormatGuess;
+    private UnsupportedFormatFamily noOpFormatGuess;
 
     @Override
     public boolean accept(String encoding) {

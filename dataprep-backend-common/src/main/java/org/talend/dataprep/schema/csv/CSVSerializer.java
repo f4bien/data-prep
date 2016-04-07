@@ -28,6 +28,7 @@ import org.talend.dataprep.api.dataset.ColumnMetadata;
 import org.talend.dataprep.api.dataset.DataSetMetadata;
 import org.talend.dataprep.exception.TDPException;
 import org.talend.dataprep.exception.error.CommonErrorCodes;
+import org.talend.dataprep.format.CSVFormatFamily;
 import org.talend.dataprep.schema.Serializer;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -51,7 +52,7 @@ public class CSVSerializer implements Serializer {
             // Serialize asynchronously for better performance (especially if caller doesn't consume all, see sampling).
             Runnable r = () -> {
                 final Map<String, String> parameters = metadata.getContent().getParameters();
-                final String separator = parameters.get(CSVFormatGuess.SEPARATOR_PARAMETER);
+                final String separator = parameters.get(CSVFormatFamily.SEPARATOR_PARAMETER);
                 try (CSVReader reader = new CSVReader(new InputStreamReader(rawContent, metadata.getEncoding()), separator.charAt(0))) {
                     JsonGenerator generator = new JsonFactory().createGenerator(jsonOutput);
                     int i = 0;

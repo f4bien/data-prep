@@ -1,38 +1,36 @@
-//  ============================================================================
+// ============================================================================
 //
-//  Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-//  This source code is available under agreement available at
-//  https://github.com/Talend/data-prep/blob/master/LICENSE
+// This source code is available under agreement available at
+// https://github.com/Talend/data-prep/blob/master/LICENSE
 //
-//  You should have received a copy of the agreement
-//  along with this program; if not, write to Talend SA
-//  9 rue Pages 92150 Suresnes, France
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
-//  ============================================================================
+// ============================================================================
 
-package org.talend.dataprep.schema;
+package org.talend.dataprep.format;
 
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.talend.dataprep.api.dataset.ColumnMetadata;
+import org.talend.dataprep.schema.DraftValidator;
+import org.talend.dataprep.schema.SchemaParser;
+import org.talend.dataprep.schema.Serializer;
 
 /**
- * Represents a "guess" for a data set content format (e.g. CSV, Excel...).
+ * Represents a Format family (e.g. CSV, Excel...) for a data set content format.
  */
-public interface FormatGuess {
+public interface FormatFamily {
 
     /**
      * @return The MIME type of the format guess.
      */
     String getMediaType();
-
-    /**
-     * @return A float between 0 and 1. 1 indicates guess is 100% sure, 0 indicates a certain 0%.
-     */
-    float getConfidence();
 
     /**
      * @return {@link org.talend.dataprep.schema.SchemaParser} that allowed data prep to read {@link ColumnMetadata
@@ -64,9 +62,9 @@ public interface FormatGuess {
     class Factory {
 
         @Autowired
-        private Map<String, FormatGuess> formatGuessMap;
+        private Map<String, FormatFamily> formatGuessMap;
 
-        public FormatGuess getFormatGuess(String formatGuessId) {
+        public FormatFamily getFormatGuess(String formatGuessId) {
             return formatGuessMap.get(formatGuessId);
         }
 

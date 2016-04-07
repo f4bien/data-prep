@@ -22,9 +22,10 @@ import java.io.InputStream;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.talend.dataprep.format.XlsFormatFamily;
 import org.talend.dataprep.schema.AbstractSchemaTestUtils;
 import org.talend.dataprep.schema.FormatGuesser;
-import org.talend.dataprep.schema.unsupported.UnsupportedFormatGuess;
+import org.talend.dataprep.format.UnsupportedFormatFamily;
 
 /**
  * Unit test for the XlsFormatGuesser
@@ -44,14 +45,14 @@ public class XlsFormatGuesserTest extends AbstractSchemaTestUtils {
     @Test
     public void shouldNotGuessBecauseEmptyFile() throws IOException {
         FormatGuesser.Result actual = guesser.guess(getRequest(new ByteArrayInputStream(new byte[0]), "#1"), "UTF-8");
-        assertTrue(actual.getFormatGuess() instanceof UnsupportedFormatGuess);
+        assertTrue(actual.getFormat() instanceof UnsupportedFormatFamily);
     }
 
     @Test
     public void shouldGuessXls() throws Exception {
         try (InputStream inputStream = this.getClass().getResourceAsStream("customersDate.xls")) {
             FormatGuesser.Result actual = guesser.guess(getRequest(inputStream, "#2"), "UTF-8");
-            assertTrue(actual.getFormatGuess() instanceof XlsFormatGuess);
+            assertTrue(actual.getFormat() instanceof XlsFormatFamily);
         }
     }
 
@@ -59,7 +60,7 @@ public class XlsFormatGuesserTest extends AbstractSchemaTestUtils {
     public void shouldGuessXlsx() throws Exception {
         try (InputStream inputStream = this.getClass().getResourceAsStream("file_with_header.xlsx")) {
             FormatGuesser.Result actual = guesser.guess(getRequest(inputStream, "#3"), "UTF-8");
-            assertTrue(actual.getFormatGuess() instanceof XlsFormatGuess);
+            assertTrue(actual.getFormat() instanceof XlsFormatFamily);
         }
     }
 
@@ -67,7 +68,7 @@ public class XlsFormatGuesserTest extends AbstractSchemaTestUtils {
     public void shouldNotGuessCsv() throws Exception {
         try (InputStream inputStream = this.getClass().getResourceAsStream("fake.xls")) {
             FormatGuesser.Result actual = guesser.guess(getRequest(inputStream, "#4"), "UTF-8");
-            assertTrue(actual.getFormatGuess() instanceof UnsupportedFormatGuess);
+            assertTrue(actual.getFormat() instanceof UnsupportedFormatFamily);
         }
     }
 
@@ -75,7 +76,7 @@ public class XlsFormatGuesserTest extends AbstractSchemaTestUtils {
     public void shouldNotGuessXml() throws Exception {
         try (InputStream inputStream = this.getClass().getResourceAsStream("simple_workbook.xml")) {
             FormatGuesser.Result actual = guesser.guess(getRequest(inputStream, "#5"), "UTF-8");
-            assertTrue(actual.getFormatGuess() instanceof UnsupportedFormatGuess);
+            assertTrue(actual.getFormat() instanceof UnsupportedFormatFamily);
         }
     }
 
@@ -83,7 +84,7 @@ public class XlsFormatGuesserTest extends AbstractSchemaTestUtils {
     public void shouldNotGuessHtml() throws Exception {
         try (InputStream inputStream = this.getClass().getResourceAsStream("../html/sales-force.xls")) {
             FormatGuesser.Result actual = guesser.guess(getRequest(inputStream, "#6"), "UTF-8");
-            assertTrue(actual.getFormatGuess() instanceof UnsupportedFormatGuess);
+            assertTrue(actual.getFormat() instanceof UnsupportedFormatFamily);
         }
     }
 }

@@ -52,7 +52,7 @@ import org.talend.dataprep.log.Markers;
 import org.talend.dataprep.metrics.Timed;
 import org.talend.dataprep.metrics.VolumeMetered;
 import org.talend.dataprep.schema.DraftValidator;
-import org.talend.dataprep.schema.FormatGuess;
+import org.talend.dataprep.format.FormatFamily;
 import org.talend.dataprep.schema.SchemaParserResult;
 import org.talend.dataprep.security.Security;
 import org.talend.dataprep.user.store.UserDataRepository;
@@ -147,7 +147,7 @@ public class DataSetService {
      * Format guess factory.
      */
     @Autowired
-    private FormatGuess.Factory formatGuessFactory;
+    private FormatFamily.Factory formatGuessFactory;
 
     /**
      * Dataset locator (used for remote datasets).
@@ -870,9 +870,9 @@ public class DataSetService {
                 }
 
                 // Validate that the new data set metadata and removes the draft status
-                FormatGuess formatGuess = formatGuessFactory.getFormatGuess(dataSetMetadata.getContent().getFormatGuessId());
+                FormatFamily format = formatGuessFactory.getFormatGuess(dataSetMetadata.getContent().getFormatGuessId());
                 try {
-                    DraftValidator draftValidator = formatGuess.getDraftValidator();
+                    DraftValidator draftValidator = format.getDraftValidator();
                     DraftValidator.Result result = draftValidator.validate(dataSetMetadata);
                     if (result.isDraft()) {
                         // This is not an exception case: data set may remain a draft after update (although rather

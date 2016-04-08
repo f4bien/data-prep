@@ -20,7 +20,7 @@
  * @requires data-prep.statistics.service:StatisticsTooltipService
  * @requires data-prep.services.filter.service:FilterService
  */
-export default function ColumnProfileCtrl($timeout, state, StatisticsService, StatisticsTooltipService, FilterService) {
+export default function ColumnProfileCtrl($translate, $timeout, state, StatisticsService, StatisticsTooltipService, FilterService) {
     'ngInject';
 
     var vm = this;
@@ -28,7 +28,6 @@ export default function ColumnProfileCtrl($timeout, state, StatisticsService, St
     vm.state = state;
     vm.statisticsService = StatisticsService;
     vm.statisticsTooltipService = StatisticsTooltipService;
-
 
     //------------------------------------------------------------------------------------------------------
     //------------------------------------------------FILTER------------------------------------------------
@@ -99,6 +98,48 @@ export default function ColumnProfileCtrl($timeout, state, StatisticsService, St
      */
     vm.aggregations = ['SUM', 'MAX', 'MIN', 'AVERAGE'];
 
+    vm.selectAggregationColumn = function() {
+        if(!vm.selectedAggregationColumn) {
+            vm.selectedAggregation = null;
+        }
+        else {
+            vm.selectedAggregation = state.playground.statistics.histogram.aggregation || vm.aggregations[0];
+        }
+        vm.updateSelectedAggregationDetails();
+    };
+
+    vm.resetAggregation = function() {
+        vm.selectedAggregationColumn = state.playground.statistics.histogram && state.playground.statistics.histogram.aggregationColumn;
+        vm.selectedAggregation = state.playground.statistics.histogram && state.playground.statistics.histogram.aggregation;
+        vm.updateSelectedAggregationDetails();
+    };
+
+    vm.updateSelectedAggregationDetails = function() {
+        if(! vm.selectedAggregationColumn) {
+            vm.selectedAggregationDetails = null;
+        }
+        else {
+            const aggregCol = vm.selectedAggregationColumn.name;
+            const aggreg = $translate.instant(vm.selectedAggregation);
+            const group = state.playground.statistics.histogram.column.name;
+            const selectedOptions = {aggreg: aggreg, col: aggregCol, group: group};
+            vm.selectedAggregationDetails = $translate.instant('AGGREGATION_DETAILS', selectedOptions);
+        }
+    };
+
+    vm.getCurrentAggregationDetails = function() {
+        if(!state.playground.statistics.histogram || !state.playground.statistics.histogram.aggregation) {
+            return null;
+        }
+        else {
+            const aggregCol = state.playground.statistics.histogram.aggregationColumn.name;
+            const aggreg = $translate.instant(state.playground.statistics.histogram.aggregation);
+            const group = state.playground.statistics.histogram.column.name;
+            const selectedOptions = {aggreg: aggreg, col: aggregCol, group: group};
+            return $translate.instant('AGGREGATION_DETAILS', selectedOptions);
+        }
+    };
+
     /**
      * @ngdoc method
      * @name getCurrentAggregation
@@ -120,7 +161,10 @@ export default function ColumnProfileCtrl($timeout, state, StatisticsService, St
      * @param {object} aggregation The aggregation to perform
      * @description Trigger a new aggregation graph
      */
-    vm.changeAggregation = function changeAggregation(column, aggregation) {
+    vm.changeAggregation = function changeAggregation() {
+        const column = vm.selectedAggregationColumn;
+        const aggregation = vm.selectedAggregation;
+
         if (state.playground.statistics.histogram &&
             state.playground.statistics.histogram.aggregationColumn === column &&
             state.playground.statistics.histogram.aggregation === aggregation) {

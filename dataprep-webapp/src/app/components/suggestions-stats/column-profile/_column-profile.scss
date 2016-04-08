@@ -21,22 +21,28 @@
       @include flex-row();
       @include align-items(center);
 
-      .button-dropdown {
-        border-color: $dark-gray;
-        min-width: 90px;
-        max-width: 240px;
-      }
+      .chart-control-options {
 
-      .button-dropdown,
-      .button-dropdown .button-dropdown-main,
-      .button-dropdown .button-dropdown-side {
-        background-color: $white;
-        color: $dark-gray;
-      }
-    }
+        .chart-control-trigger {
+          border: 1px solid;
+          border-radius: 3px;
+          max-width: 240px;
+          padding: 5px 10px;
+          text-transform: uppercase;
+        }
 
-    .moreText {
-      @include ellipsis(95%);
+        .chart-control-form {
+          cursor: default;
+          min-width: 300px;
+          padding: 20px;
+        }
+
+        .chart-control-buttons {
+          @include flex-row();
+          @include justify-content(flex-end);
+          margin-top: 10px;
+        }
+      }
     }
 
     .column-profile-aggregation-description {

@@ -26,28 +26,46 @@
     <div id="column-profile-chart" ng-switch-when="false">
         <div class="column-profile-options">
             <div class="column-profile-chart-control" insertion-charts-control>
-                <talend-button-dropdown button-text="{{ columnProfileCtrl.getCurrentAggregation() | translate }} {{columnProfileCtrl.state.playground.statistics.histogram.aggregationColumn.name}}">
-                    <ul class="column-profile-aggregation-list">
-                        <li ng-click="columnProfileCtrl.changeAggregation()">
-                            <div translate-once="LINE_COUNT"></div>
-                        </li>
-                        <li ng-repeat="column in columnProfileCtrl.aggregationColumns track by column.id" class="more">
-                            <div class="moreText" title="{{column.name}}">{{column.name}}</div>
-                            <ul class="submenu">
-                                <li ng-repeat="aggregation in columnProfileCtrl.aggregations track by $index" ng-click="columnProfileCtrl.changeAggregation(column, aggregation)" title="{{ ::aggregation | translate }}">
-                                    <div class="moreText" translate-once="{{aggregation}}"></div>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </talend-button-dropdown>
+                <talend-dropdown class="chart-control-options"
+                                 on-open="columnProfileCtrl.resetAggregation()"
+                                 close-on-select="false">
+                    <div class="dropdown-container">
+                        <div class="dropdown-action dropdown-button chart-control-trigger">
+                            {{ columnProfileCtrl.getCurrentAggregation() | translate }} {{columnProfileCtrl.state.playground.statistics.histogram.aggregationColumn.name}}
+                        </div>
+                    </div>
+                    <form class="dropdown-menu chart-control-form" ng-submit="columnProfileCtrl.changeAggregation()">
+                        <div>
+                            <span translate-once="COLUMN"></span>
+                            <select ng-model="columnProfileCtrl.selectedAggregationColumn"
+                                    ng-options="column.name for column in columnProfileCtrl.aggregationColumns track by column.id"
+                                    ng-change="columnProfileCtrl.selectAggregationColumn()">
+                                <option value="" translate-once="CURRENT_NO_AGGREGATION"></option>
+                            </select>
+                        </div>
+
+                        <div ng-if="columnProfileCtrl.selectedAggregationColumn">
+                            <span translate-once="AGGREGATION"></span>
+                            <select ng-model="columnProfileCtrl.selectedAggregation"
+                                    ng-options="aggreg | translate for aggreg in columnProfileCtrl.aggregations track by aggreg"
+                                    ng-change="columnProfileCtrl.updateSelectedAggregationDetails()"></select>
+                        </div>
+
+                        <div ng-if="columnProfileCtrl.selectedAggregationDetails"
+                             ng-bind-html="columnProfileCtrl.selectedAggregationDetails"
+                             class="column-profile-aggregation-description">
+                        </div>
+
+                        <div class="chart-control-buttons">
+                            <button type="button" class="btn-secondary dropdown-close">Cancel</button>
+                            <button type="submit" class="btn-primary dropdown-close">Submit</button>
+                        </div>
+                    </form>
+                </talend-dropdown>
             </div>
 
-            <div ng-if="columnProfileCtrl.state.playground.statistics.histogram.aggregation" class="column-profile-aggregation-description">
-                <span>{{columnProfileCtrl.state.playground.statistics.histogram.aggregation | translate}}</span>
-                <span class="highlight">{{columnProfileCtrl.state.playground.statistics.histogram.aggregationColumn.name}}</span>
-                <span translate-once="GROUP_BY"></span>
-                <span class="highlight">{{columnProfileCtrl.state.playground.statistics.histogram.column.name}}</span>
+            <div ng-bind-html="columnProfileCtrl.getCurrentAggregationDetails()"
+                 class="column-profile-aggregation-description">
             </div>
         </div>
 
